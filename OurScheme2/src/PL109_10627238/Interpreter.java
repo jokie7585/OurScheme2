@@ -1,0 +1,356 @@
+package PL109_10627238;
+
+import java.util.Vector;
+
+public class Interpreter {
+  private static Token sTmpToken;
+  
+  public static Node ReadSexp() throws Throwable {
+    Node rootNode = NewFindExp();
+    return rootNode;
+  } // ReadSexp()
+  
+  private static Node NewFindExp() throws Throwable {
+    Token tmp = PeekNextToken();
+    
+    if ( tmp.mType == Symbol.sQUOTE ) {
+      ComfirmNextToken();
+      Node retNode = new Node();
+      retNode.Add_LeftChild( Node.Generate_Quote() );
+      retNode.Add_NoDot_Child( NewFindExp() );
+      return retNode;
+      
+    } // if
+    else if ( tmp.mType == Symbol.sL_PAREN ) {
+      // check the left PAREN
+      ComfirmNextToken();
+      // create new tree
+      Node newSexp = new Node();
+      // find first sEXP
+      Node retNode = null;
+      Node bones = null;
+      
+      PeekNextToken();
+      if ( sTmpToken.mType != Symbol.sR_PAREN ) {
+        retNode = NewFindExp();
+        bones = newSexp.Add_LeftChild( retNode );
+        
+        boolean is_Skip = false;
+        while ( retNode != null && !is_Skip ) {
+          tmp = PeekNextToken();
+          
+          if ( tmp.mType == Symbol.sDOT || tmp.mType == Symbol.sR_PAREN ) {
+            is_Skip = true;
+          } // if
+          else {
+            retNode = NewFindExp();
+            bones = bones.Add_NoDot_Child( retNode );
+          } // else
+          
+        } // while
+        
+        tmp = PeekNextToken();
+        if ( tmp.mType == Symbol.sDOT ) {
+          ComfirmNextToken();
+          retNode = NewFindExp();
+          bones.Add_Dot_Child( retNode );
+        } // if
+      } // if
+      
+      tmp = PeekNextToken();
+      if ( tmp.mType == Symbol.sR_PAREN ) {
+        ComfirmNextToken();
+        if ( newSexp.Is_Nil() ) {
+          return new Node( new Token( "()", Symbol.sNIL ) );
+        } // if
+        
+        return newSexp;
+      } // if
+      else {
+        ComfirmNextToken();
+        Vector<String> expects = new Vector<String>();
+        expects.add( "')'" );
+        int line = MyScanner.Get_Instance().CurLine();
+        int col = MyScanner.Get_Instance().PreTokenCol();
+        throw new UnexpectedError( expects, tmp, line, col );
+      } // else
+      
+    } // else if
+    else if ( tmp.mType == Symbol.sFLOAT || tmp.mType == Symbol.sINT || tmp.mType == Symbol.sNIL
+        || tmp.mType == Symbol.sT || tmp.mType == Symbol.sSTRING || tmp.mType == Symbol.sSYMBOL ) {
+      Node node = new Node( tmp );
+      ComfirmNextToken();
+      return node;
+    } // else if
+    else {
+      ComfirmNextToken();
+      Vector<String> expects = new Vector<String>();
+      expects.add( "atom" );
+      expects.add( "'('" );
+      int line = MyScanner.Get_Instance().CurLine();
+      int col = MyScanner.Get_Instance().PreTokenCol();
+      throw new UnexpectedError( expects, tmp, line, col );
+    } // else
+  } // NewFindExp()
+  
+  public static void NewPrinter( Node root ) throws Throwable {
+    if ( root.Is_Dot() ) {
+      NewSubprinter( root.Get(), 0 + 1 );
+    } // if
+    else {
+      // print atom
+      System.out.println( Evaluate( root.Get().mToken ) );
+      
+    } // else
+    
+  } // NewPrinter()
+  
+  private static void NewSubprinter( Node root, int base ) throws Throwable {
+    if ( root.mL_Child.Is_Dot() ) {
+      System.out.print( "( " );
+      
+      NewSubprinter( root.mL_Child.Get(), base + 1 );
+      
+      // print through bone
+      Node boneNode = root.mR_Child.Get();
+      
+      while ( boneNode != null ) {
+        
+        if ( boneNode.mL_Child != null ) {
+          if ( boneNode.mL_Child.Is_Dot() ) {
+            // print inner indent
+            System.out.print( IndentGenerator( base ) );
+            NewSubprinter( boneNode.mL_Child.Get(), base + 1 );
+          } // if
+          else if ( boneNode.mL_Child == null ) {
+            throw new EvaluatingError( "Warning", "shuold not have the exception" );
+          } // else if
+          else {
+            // print a dot pair
+            System.out.println( IndentGenerator( base ) + Evaluate( boneNode.mL_Child.Get().mToken ) );
+            
+          } // else
+        } // if
+        else {
+          if ( boneNode.mR_Child == null && !boneNode.Is_Dot() ) {
+            System.out.println( IndentGenerator( base ) + "." );
+            System.out.println( IndentGenerator( base ) + Evaluate( boneNode.Get().mToken ) );
+          } // if
+          else {
+            throw new EvaluatingError( "Warning", "shuold not have the exception" );
+          } // else
+        } // else
+        
+        boneNode = boneNode.mR_Child;
+      } // while
+      
+      System.out.println( IndentGenerator( base - 1 ) + ")" );
+    } // if
+    else if ( root.mL_Child == null ) {
+      throw new EvaluatingError( "Warning", "shuold not have the exception" );
+    } // else if
+    else {
+      // print start quote
+      System.out.print( "( " );
+      // print first node
+      
+      System.out.println( Evaluate( root.mL_Child.Get().mToken ) );
+      // print through bone
+      Node boneNode = root.mR_Child;
+      
+      while ( boneNode != null ) {
+        
+        if ( boneNode.mL_Child != null ) {
+          if ( boneNode.mL_Child.Is_Dot() ) {
+            // print inner indent
+            System.out.print( IndentGenerator( base ) );
+            NewSubprinter( boneNode.mL_Child.Get(), base + 1 );
+          } // if
+          else if ( boneNode.mL_Child == null ) {
+            throw new EvaluatingError( "Warning", "shuold not have the exception" );
+          } // else if
+          else {
+            // print a dot pair
+            System.out.println( IndentGenerator( base ) + Evaluate( boneNode.mL_Child.Get().mToken ) );
+            
+          } // else
+        } // if
+        else {
+          if ( boneNode.mR_Child == null && !boneNode.Is_Dot() ) {
+            System.out.println( IndentGenerator( base ) + "." );
+            System.out.println( IndentGenerator( base ) + Evaluate( boneNode.Get().mToken ) );
+          } // if
+          else {
+            throw new EvaluatingError( "Warning", "shuold not have the exception" );
+          } // else
+        } // else
+        
+        boneNode = boneNode.mR_Child;
+      } // while
+      
+      // print end quote
+      System.out.println( IndentGenerator( base - 1 ) + ")" );
+    } // else
+  } // NewSubprinter()
+  
+  private static String IndentGenerator( int level ) {
+    int indentCounter = level * 2;
+    StringBuffer indent = new StringBuffer();
+    for ( int i = 0 ; i < indentCounter ; i++ ) {
+      indent.append( " " );
+    } // for
+    
+    return indent.toString();
+  } // IndentGenerator()
+  
+  private static Token PeekNextToken() throws Throwable {
+    if ( sTmpToken == null ) {
+      sTmpToken = MyScanner.Get_Instance().Next();
+      // System.out.println( "read in : " + sTmpToken.mContent );
+      return sTmpToken;
+    } // if
+    
+    return sTmpToken;
+  } // PeekNextToken()
+  
+  private static void ComfirmNextToken() {
+    sTmpToken = null;
+  } // ComfirmNextToken()
+  
+  private static String Evaluate( Token token ) {
+    if ( token.mType == Symbol.sINT ) {
+      return Integer.toString( Integer.parseInt( token.mContent ) );
+    } // if
+    else if ( token.mType == Symbol.sFLOAT ) {
+      return String.format( "%.3f", Float.parseFloat( token.mContent ) );
+    } // else if
+    else if ( token.mType == Symbol.sSYMBOL || token.mType == Symbol.sSTRING
+        || token.mType == Symbol.sSYMBOL_LEXICAL ) {
+      return token.mContent;
+    } // else if
+    else if ( token.mType == Symbol.sNIL ) {
+      return "nil";
+    } // else if
+    else if ( token.mType == Symbol.sT ) {
+      return "#t";
+    } // else if
+    else if ( token.mType == Symbol.sPROCEDUREL ) {
+      return "#<procedure " + token.mContent + ">";
+    } // else
+    else if ( token.mType == Symbol.sEMPTYOBJ ) {
+      return "";
+    } // else if
+    else if ( token.mType == Symbol.sQUOTE ) {
+      return "quote";
+    } // else if
+    
+    return null;
+  } // Evaluate()
+  
+} // class Interpreter
+
+class Node {
+  public Node mL_Child;
+  public Node mR_Child;
+  public Token mToken;
+  
+  public static Node Generate_Empty() {
+    return new Node( new Token( "", Symbol.sEMPTYOBJ ) );
+  } // Generate_Empty()
+  
+  public static Node Generate_String( String string ) {
+    return new Node( new Token( string, Symbol.sSTRING ) );
+  } // Generate_String()
+  
+  public static Node Generate_Quote() {
+    return new Node( new Token( "quote", Symbol.sSYMBOL ) );
+  } // Generate_Quote()
+  
+  public Node() {
+    mToken = new Token( ".", Symbol.sDOT );
+    
+  } // Node()
+  
+  public Node( Token token ) {
+    mToken = token;
+  } // Node()
+  
+  public Node Get() {
+    return this;
+  } // Get()
+  
+  public Node Get_R_C() {
+    return this.mR_Child;
+  } // Get_R_Child()
+  
+  public Node Get_L_C() {
+    return this.mL_Child;
+  } // Get_L_Child()
+  
+  public String Get_Symbol() {
+    return mToken.mContent;
+  } // Get_Symbol()
+  
+  public boolean Is_Dot() {
+    if ( Get().mToken.mType == Symbol.sDOT ) {
+      return true;
+    } // if
+    
+    return false;
+  } // Is_Dot()
+  
+  public boolean Is_Nil() {
+    if ( ( Get().mToken.mType == Symbol.sDOT && Get().mL_Child == null )
+        || Get().mToken.mType == Symbol.sNIL ) {
+      return true;
+    } // if
+    
+    return false;
+  } // Is_Nil()
+  
+  public boolean Is_T() {
+    if ( Get().mToken.mType == Symbol.sT ) {
+      return true;
+    } // if
+    
+    return false;
+  } // Is_T()
+  
+  public boolean Is_Quote() {
+    if ( mToken.mType == Symbol.sQUOTE ) {
+      return true;
+    } // if
+    
+    return false;
+  } // Is_Quote()
+  
+  public Node Add_LeftChild( Node node ) throws Throwable {
+    
+    if ( mToken.mType != Symbol.sDOT ) {
+      throw new EvaluatingError( "Foundamental error", "Must fix" );
+    } // if
+    
+    mL_Child = node;
+    return this;
+  } // Add_LeftChild()
+  
+  public Node Add_NoDot_Child( Node node ) throws Throwable {
+    if ( mToken.mType != Symbol.sDOT ) {
+      throw new EvaluatingError( "Foundamental error", "Must fix" );
+    } // if
+    
+    mR_Child = new Node();
+    mR_Child.mL_Child = node;
+    return mR_Child;
+  } // Add_NoDot_Child()
+  
+  public Node Add_Dot_Child( Node node ) throws Throwable {
+    if ( mToken.mType != Symbol.sDOT ) {
+      throw new EvaluatingError( "Foundamental error", "Must fix" );
+    } // if
+    
+    mR_Child = node;
+    return this;
+  } // Add_Dot_Child()
+  
+} // class Node
