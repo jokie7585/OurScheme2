@@ -133,12 +133,12 @@ public class Interpreter {
           } // else
         } // if
         else {
-          if ( boneNode.mR_Child == null && !boneNode.Is_Dot() ) {
+          if ( boneNode.mR_Child == null && !boneNode.Is_Nil() ) {
             System.out.println( IndentGenerator( base ) + "." );
             System.out.println( IndentGenerator( base ) + Evaluate( boneNode.Get().mToken ) );
           } // if
           else {
-            throw new EvaluatingError( "Warning", "shuold not have the exception" );
+            // do nothing
           } // else
         } // else
         
@@ -178,12 +178,12 @@ public class Interpreter {
           } // else
         } // if
         else {
-          if ( boneNode.mR_Child == null && !boneNode.Is_Dot() ) {
+          if ( boneNode.mR_Child == null && !boneNode.Is_Nil() ) {
             System.out.println( IndentGenerator( base ) + "." );
             System.out.println( IndentGenerator( base ) + Evaluate( boneNode.Get().mToken ) );
           } // if
           else {
-            throw new EvaluatingError( "Warning", "shuold not have the exception" );
+            // do nothing
           } // else
         } // else
         
