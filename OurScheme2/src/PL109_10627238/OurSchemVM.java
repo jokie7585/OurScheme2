@@ -1011,6 +1011,7 @@ class CallStack {
     Set_Binding_inner( "cond", true );
     Set_Binding_inner( "begine", true );
     Set_Binding_inner( "clean-environment", true );
+    Set_Binding_inner( "exit", true );
   } // Init()
   
   public void Exception_Process() {

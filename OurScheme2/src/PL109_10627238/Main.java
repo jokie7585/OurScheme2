@@ -61,7 +61,7 @@ public class Main {
       
     } // catch
     catch ( FinishProgramException e ) {
-      
+      System.out.println( "" );
       System.out.println( "Thanks for using OurScheme!" );
       
     } // catch
