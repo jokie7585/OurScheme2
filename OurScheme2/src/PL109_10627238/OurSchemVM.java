@@ -954,51 +954,51 @@ class CallStack {
   
   public void Init() {
     mStack = new Vector<BindingTB>();
-    mStack.add( new BindingTB( null ) );
+    mStack.add( new BindingTB() );
     
     // load inner symbol
     // Set_Binding_inner( "t", false, Function.Generate_True() );
     
     // load inner function
-    Set_Binding_inner( "cons", true, null );
-    Set_Binding_inner( "list", true, null );
-    Set_Binding_inner( "quote", true, null );
-    Set_Binding_inner( "'", true, null );
-    Set_Binding_inner( "car", true, null );
-    Set_Binding_inner( "cdr", true, null );
-    Set_Binding_inner( "define", true, null );
-    Set_Binding_inner( "atom?", true, null );
-    Set_Binding_inner( "pair?", true, null );
-    Set_Binding_inner( "list?", true, null );
-    Set_Binding_inner( "null?", true, null );
-    Set_Binding_inner( "integer?", true, null );
-    Set_Binding_inner( "real?", true, null );
-    Set_Binding_inner( "number?", true, null );
-    Set_Binding_inner( "string?", true, null );
-    Set_Binding_inner( "boolean?", true, null );
-    Set_Binding_inner( "symbol?", true, null );
-    Set_Binding_inner( "+", true, null );
-    Set_Binding_inner( "-", true, null );
-    Set_Binding_inner( "*", true, null );
-    Set_Binding_inner( "/", true, null );
-    Set_Binding_inner( "not", true, null );
-    Set_Binding_inner( "and", true, null );
-    Set_Binding_inner( "or", true, null );
-    Set_Binding_inner( ">", true, null );
-    Set_Binding_inner( ">=", true, null );
-    Set_Binding_inner( "<", true, null );
-    Set_Binding_inner( "<=", true, null );
-    Set_Binding_inner( "=", true, null );
-    Set_Binding_inner( "string-append", true, null );
-    Set_Binding_inner( "string>?", true, null );
-    Set_Binding_inner( "string<?", true, null );
-    Set_Binding_inner( "string=?", true, null );
-    Set_Binding_inner( "eqv?", true, null );
-    Set_Binding_inner( "equal?", true, null );
-    Set_Binding_inner( "if", true, null );
-    Set_Binding_inner( "cond", true, null );
-    Set_Binding_inner( "begine", true, null );
-    Set_Binding_inner( "clean-environment", true, null );
+    Set_Binding_inner( "cons", true );
+    Set_Binding_inner( "list", true );
+    Set_Binding_inner( "quote", true );
+    Set_Binding_inner( "'", true );
+    Set_Binding_inner( "car", true );
+    Set_Binding_inner( "cdr", true );
+    Set_Binding_inner( "define", true );
+    Set_Binding_inner( "atom?", true );
+    Set_Binding_inner( "pair?", true );
+    Set_Binding_inner( "list?", true );
+    Set_Binding_inner( "null?", true );
+    Set_Binding_inner( "integer?", true );
+    Set_Binding_inner( "real?", true );
+    Set_Binding_inner( "number?", true );
+    Set_Binding_inner( "string?", true );
+    Set_Binding_inner( "boolean?", true );
+    Set_Binding_inner( "symbol?", true );
+    Set_Binding_inner( "+", true );
+    Set_Binding_inner( "-", true );
+    Set_Binding_inner( "*", true );
+    Set_Binding_inner( "/", true );
+    Set_Binding_inner( "not", true );
+    Set_Binding_inner( "and", true );
+    Set_Binding_inner( "or", true );
+    Set_Binding_inner( ">", true );
+    Set_Binding_inner( ">=", true );
+    Set_Binding_inner( "<", true );
+    Set_Binding_inner( "<=", true );
+    Set_Binding_inner( "=", true );
+    Set_Binding_inner( "string-append", true );
+    Set_Binding_inner( "string>?", true );
+    Set_Binding_inner( "string<?", true );
+    Set_Binding_inner( "string=?", true );
+    Set_Binding_inner( "eqv?", true );
+    Set_Binding_inner( "equal?", true );
+    Set_Binding_inner( "if", true );
+    Set_Binding_inner( "cond", true );
+    Set_Binding_inner( "begine", true );
+    Set_Binding_inner( "clean-environment", true );
   } // Init()
   
   public void Exception_Process() {
@@ -1038,9 +1038,9 @@ class CallStack {
     return tmp.Set( bindingTarget, Sexp );
   } // Set_Binding()
   
-  private void Set_Binding_inner( String bindingTarget, boolean isFunc, Node bind ) {
+  private void Set_Binding_inner( String bindingTarget, boolean isFunc ) {
     BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
-    tmp.Set_innerBinding( bindingTarget, isFunc, bind );
+    tmp.Set_innerBinding( bindingTarget, isFunc );
   } // Set_Binding_inner()
   
 } // class CallStack

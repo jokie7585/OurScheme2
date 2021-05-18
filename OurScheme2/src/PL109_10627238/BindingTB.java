@@ -6,6 +6,11 @@ public class BindingTB {
   public Vector<Binding> mBindings;
   public BindingTB mPreTable;
   
+  public BindingTB() {
+    mBindings = new Vector<Binding>();
+    mPreTable = null;
+  } // BindingTB()
+  
   public BindingTB( BindingTB preTb ) {
     mBindings = new Vector<Binding>();
     mPreTable = preTb;
@@ -139,8 +144,8 @@ public class BindingTB {
     return null;
   } // Get()
   
-  public void Set_innerBinding( String bindingTarget, boolean isFunc, Node bind ) {
-    mBindings.add( new Binding( bindingTarget, isFunc, bind ) );
+  public void Set_innerBinding( String bindingTarget, boolean isFunc ) {
+    mBindings.add( new Binding( bindingTarget, isFunc ) );
   } // Set_innerBinding()
   
   // inner get
@@ -176,33 +181,17 @@ class Binding {
   public int mMemoryIndex;
   public boolean mIs_primitive;
   
-  public Binding( String symbol, boolean isFunc, Node bind ) {
+  public Binding( String symbol, boolean isFunc ) {
     
-    if ( bind == null ) {
-      mSymbol = symbol;
-      mIs_primitive = true;
-      
-      if ( isFunc ) {
-        mMemoryIndex = Memory.Get_Instance().Add( symbol, null, null );
-      } // if
-      else {
-        // create binding
-        mMemoryIndex = Memory.Get_Instance().Add( symbol, bind );
-      } // else
-      
+    mSymbol = symbol;
+    mIs_primitive = true;
+    
+    if ( isFunc ) {
+      mMemoryIndex = Memory.Get_Instance().Add( symbol, isFunc );
     } // if
     else {
-      mSymbol = symbol;
-      mIs_primitive = true;
-      
-      if ( isFunc ) {
-        mMemoryIndex = Memory.Get_Instance().Add( symbol, null, null );
-      } // if
-      else {
-        // create binding
-        mMemoryIndex = Memory.Get_Instance().Add( symbol, bind );
-      } // else
-      
+      // create binding
+      mMemoryIndex = Memory.Get_Instance().Add( symbol, isFunc );
     } // else
     
   } // Binding()
@@ -278,8 +267,8 @@ class Memory {
     
   } // Get_Instance()
   
-  public int Add( String symbol, boolean isFunc, Node bind ) {
-    MemoryItem item = new MemoryItem( symbol, isFunc, bind );
+  public int Add( String symbol, boolean isFunc ) {
+    MemoryItem item = new MemoryItem( symbol, isFunc );
     mMemoryItems.add( item );
     return mMemoryItems.indexOf( item );
     
@@ -302,7 +291,13 @@ class Memory {
   } // Get()
   
   public int MemoryIndex( Node item ) {
-    return mMemoryItems.indexOf( item );
+    for ( int i = 0 ; i < mMemoryItems.size() ; i++ ) {
+      if ( mMemoryItems.elementAt( i ).Get() == item.Get() ) {
+        return i;
+      } // if
+    } // for
+    
+    return -1;
   } // MemoryIndex()
   
 } // class Memory
@@ -316,7 +311,7 @@ class MemoryItem extends Node {
   public boolean mIs_function;
   public boolean mIs_primitive;
   
-  public MemoryItem( String symbol, boolean isFunc, Node bind ) {
+  public MemoryItem( String symbol, boolean isFunc ) {
     // a binding is a dot node
     super( new Token( symbol, Symbol.sBINDING ) );
     
@@ -327,9 +322,6 @@ class MemoryItem extends Node {
     if ( isFunc ) {
       mSexp = new Node( new Token( symbol, Symbol.sPROCEDUREL ) );
     } // if
-    else {
-      mSexp = bind;
-    } // else
     
   } // MemoryItem()
   
