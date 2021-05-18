@@ -304,7 +304,13 @@ public class OurSchemVM {
       
       if ( mCallStack.Is_TopLevel() ) {
         try {
-          Vector<Node> paremeters = ParseParemeter( "define", 2, functionArgsSexp, false );
+          Vector<Node> paremeters;
+          try {
+            paremeters = ParseParemeter( "define", 2, functionArgsSexp, false );
+          } // try
+          catch ( EvaluatingError e ) {
+            throw new MainSexpError( "DEFINE format" );
+          } // catch
           
           Node bindingValueNode = paremeters.elementAt( 1 );
           
@@ -331,14 +337,7 @@ public class OurSchemVM {
       
       Vector<Node> paremeters = ParseParemeter( "car", 1, functionArgsSexp, false );
       Node param1 = Evaluate( paremeters.elementAt( 0 ) ).Get();
-      Node result = InnerFunction.Car( param1 );
-      
-      if ( result == null ) {
-        throw new EvaluatingError( "Foundamental error", "Must fix" );
-      } // if
-      else {
-        returnNode = result;
-      } // else
+      returnNode = InnerFunction.Car( param1 );
       
       mCallStack.Pop();
     } // else if
@@ -349,14 +348,7 @@ public class OurSchemVM {
       
       Vector<Node> paremeters = ParseParemeter( "cdr", 1, functionArgsSexp, false );
       Node param1 = Evaluate( paremeters.elementAt( 0 ) ).Get();
-      Node result = InnerFunction.Cdr( param1 );
-      
-      if ( result == null ) {
-        returnNode = Function.Generate_False();
-      } // if
-      else {
-        returnNode = result;
-      } // else
+      returnNode = InnerFunction.Cdr( param1 );
       
       mCallStack.Pop();
     } // else if
@@ -527,7 +519,7 @@ public class OurSchemVM {
             returnNode = Evaluate( parems.elementAt( 2 ) );
           } // if
           else {
-            returnNode = Node.Generate_Empty();
+            throw new MainSexpError( "no return value" );
           } // else
           
         } // else
@@ -537,7 +529,13 @@ public class OurSchemVM {
     } // else if
     else if ( funcnName.equals( "cond" ) ) {
       mCallStack.Push();
-      Vector<Node> paremeters = ParseParemeter( "cond", 1, functionArgsSexp, true );
+      Vector<Node> paremeters;
+      try {
+        paremeters = ParseParemeter( "cond", 1, functionArgsSexp, true );
+      } // try
+      catch ( EvaluatingError e ) {
+        throw new MainSexpError( "COND format" );
+      } // catch
       
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         if ( InnerFunction.Is_List( paremeters.elementAt( i ) ).Is_T() ) {
@@ -546,7 +544,7 @@ public class OurSchemVM {
           try {
             executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
           } // try
-          catch ( Exception e ) {
+          catch ( EvaluatingError e ) {
             throw new MainSexpError( "COND format" );
           } // catch
           
@@ -603,6 +601,7 @@ public class OurSchemVM {
     } // else if
     else if ( funcnName.equals( "clean-environment" ) ) {
       // no need to push a new call stack
+      Vector<Node> paremeters = ParseParemeter( "clean-environment", 0, functionArgsSexp, false );
       
       if ( mCallStack.Is_TopLevel() ) {
         mCallStack.Init();
@@ -614,6 +613,7 @@ public class OurSchemVM {
     } // else if
     else if ( funcnName.equals( "exit" ) ) {
       // no need to push a new call stack
+      Vector<Node> paremeters = ParseParemeter( "exit", 0, functionArgsSexp, false );
       
       if ( mCallStack.Is_TopLevel() ) {
         // check no argument
@@ -638,7 +638,7 @@ public class OurSchemVM {
       } // if
       else {
         mFailedList = Sexp;
-        throw new ListError( "attempt to apply non-function" );
+        throw new EvaluatingError( "attempt to apply non-function", functionBind.Get().Get_Symbol() );
       } // else
       
     } // else

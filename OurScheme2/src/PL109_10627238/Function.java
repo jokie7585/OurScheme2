@@ -52,12 +52,26 @@ class InnerFunction {
     
   } // List()
   
-  public static Node Car( Node Sexp ) {
-    return Sexp.Get().Get_L_C();
+  public static Node Car( Node Sexp ) throws Throwable {
+    if ( Is_Pair( Sexp ).Is_T() ) {
+      return Sexp.Get().Get_L_C();
+    } // if
+    else {
+      OurSchemVM.Get_Instance().Set_FailedList( Sexp );
+      throw new OperationError( "car" );
+    } // else
+    
   } // Car()
   
-  public static Node Cdr( Node Sexp ) {
-    return Sexp.Get().Get_R_C();
+  public static Node Cdr( Node Sexp ) throws Throwable {
+    if ( Is_Pair( Sexp ).Is_T() ) {
+      return Sexp.Get().Get_R_C();
+    } // if
+    else {
+      OurSchemVM.Get_Instance().Set_FailedList( Sexp );
+      throw new OperationError( "cdr" );
+    } // else
+    
   } // Cdr()
   
   public static Node Is_Atom( Node Sexp ) {
