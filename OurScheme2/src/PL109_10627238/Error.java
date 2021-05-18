@@ -117,13 +117,11 @@ class ApplyNonFunction extends EvaluatingError {
 } // class ApplyNonFunction
 
 class ListError extends Error {
-  private Node mSexpNode;
   
-  public ListError( String type, Node Sexp ) {
+  public ListError( String type ) {
     super( type, "" );
-    mSexpNode = Sexp;
     
-  } // EvaluatingError()
+  } // ListError()
   
   public String Get_Msg() {
     
@@ -138,11 +136,9 @@ class ListError extends Error {
 } // class ListError
 
 class MainSexpError extends Error {
-  private Node mSexpNode;
   
-  public MainSexpError( String type, Node Sexp ) {
+  public MainSexpError( String type ) {
     super( type, "" );
-    mSexpNode = Sexp;
     
   } // MainSexpError()
   
@@ -160,8 +156,8 @@ class MainSexpError extends Error {
 
 class OperationError extends ListError {
   
-  public OperationError( String type, Node Sexp ) {
-    super( type, Sexp );
+  public OperationError( String type ) {
+    super( type );
   } // OperationError()
   
   public String Get_Msg() {
@@ -178,5 +174,6 @@ class OperationError extends ListError {
 class PrimitiveRedefineError extends Error {
   public PrimitiveRedefineError() {
     super( "", "" );
-  }
+  } // PrimitiveRedefineError()
+  
 } // class PrimitiveRedefineError

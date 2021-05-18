@@ -33,19 +33,19 @@ public class BindingTB {
         
         if ( InnerFunction.Is_List( bonsNode.mL_Child ).mToken.mType == Symbol.sT ) {
           // list or quoted atom
-          throw new MainSexpError( "DEFINE format", null );
+          throw new MainSexpError( "DEFINE format" );
         } // if
         else if ( bonsNode.mL_Child.mToken.mType != Symbol.sSYMBOL ) {
           // if atom check it is not a primitive
-          throw new MainSexpError( "DEFINE format", null );
-        } // else
+          throw new MainSexpError( "DEFINE format" );
+        } // else if
         else {
           // acceptable argument symbol
           // check if reuse of symbol
           
           for ( int i = 0 ; i < params.size() ; i++ ) {
             if ( params.elementAt( i ).Get_Symbol().equals( bonsNode.mL_Child.Get_Symbol() ) ) {
-              throw new MainSexpError( "DEFINE format", null );
+              throw new MainSexpError( "DEFINE format" );
             } // if
             
           } // for
@@ -87,7 +87,7 @@ public class BindingTB {
         
         if ( bindingTarget.mToken.mType != Symbol.sSYMBOL ) {
           // if atom check it is not a primitive
-          throw new MainSexpError( "DEFINE format", null );
+          throw new MainSexpError( "DEFINE format" );
         } // if
         
         targetSymbolString = bindingTarget.mToken.mContent;
@@ -111,7 +111,7 @@ public class BindingTB {
       else {
         // a non pure list
         
-        throw new MainSexpError( "DEFINE format", null );
+        throw new MainSexpError( "DEFINE format" );
       } // else
       
     } // else
@@ -272,19 +272,19 @@ class Memory {
     mMemoryItems.add( item );
     return mMemoryItems.indexOf( item );
     
-  } // MemoryItem()
+  } // Add()
   
   public int Add( String symbol, Node Sexp ) {
     MemoryItem item = new MemoryItem( symbol, Sexp );
     mMemoryItems.add( item );
     return mMemoryItems.indexOf( item );
-  } // Binding()
+  } // Add()
   
   public int Add( String symbol, Node functionArgs, Node Sexp ) {
     MemoryItem item = new MemoryItem( symbol, functionArgs, Sexp );
     mMemoryItems.add( item );
     return mMemoryItems.indexOf( item );
-  } // MemoryItem()
+  } // Add()
   
   public MemoryItem Get( int memory_Addr ) {
     return mMemoryItems.elementAt( memory_Addr );
@@ -333,7 +333,7 @@ class MemoryItem extends Node {
     mSymbol = symbol;
     mIs_function = false;
     mIs_primitive = false;
-  } // Binding()
+  } // MemoryItem()
   
   public MemoryItem( String symbol, Node functionArgs, Node Sexp ) {
     // a binding is a dot node

@@ -236,7 +236,7 @@ public class Interpreter {
     } // else if
     else if ( token.mType == Symbol.sPROCEDUREL ) {
       return "#<procedure " + token.mContent + ">";
-    } // else
+    } // else if
     else if ( token.mType == Symbol.sEMPTYOBJ ) {
       return "";
     } // else if
@@ -281,11 +281,11 @@ class Node {
   
   public Node Get_R_C() {
     return this.mR_Child;
-  } // Get_R_Child()
+  } // Get_R_C()
   
   public Node Get_L_C() {
     return this.mL_Child;
-  } // Get_L_Child()
+  } // Get_L_C()
   
   public String Get_Symbol() {
     return mToken.mContent;

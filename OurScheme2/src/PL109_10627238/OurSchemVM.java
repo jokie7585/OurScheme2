@@ -41,6 +41,10 @@ public class OurSchemVM {
     return mFailedList;
   } // Get_FailedList()
   
+  public void Set_FailedList( Node Sexp ) {
+    mFailedList = Sexp;
+  } // Set_FailedList()
+  
   public Node Get_FailedMainSexp() {
     return mNowExcutingSexpNode;
   } // Get_FailedMainSexp()
@@ -82,7 +86,7 @@ public class OurSchemVM {
       else {
         // TODO if non-list throw original List or Current List
         mFailedList = Sexp;
-        throw new ListError( "non-list", Sexp );
+        throw new ListError( "non-list" );
         // throw new ListError( "non-list", "", mNowExcutingSexpNode );
       } // else
       
@@ -262,6 +266,7 @@ public class OurSchemVM {
         } // else
         
       } // for
+      
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "cons" ) ) {
@@ -308,11 +313,11 @@ public class OurSchemVM {
           returnNode = Node.Generate_String( bindTargetString + " defined" );
         } // try
         catch ( ListError e ) {
-          throw new MainSexpError( "DEFINE format", mNowExcutingSexpNode );
+          throw new MainSexpError( "DEFINE format" );
           
         } // catch
         catch ( PrimitiveRedefineError e ) {
-          throw new MainSexpError( "DEFINE format", mNowExcutingSexpNode );
+          throw new MainSexpError( "DEFINE format" );
         } // catch
         
       } // if
@@ -378,6 +383,7 @@ public class OurSchemVM {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
       } // for
+      
       returnNode = InnerFunction.Larger_equal( evaluatedPram );
       
       mCallStack.Pop();
@@ -391,6 +397,7 @@ public class OurSchemVM {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
       } // for
+      
       returnNode = InnerFunction.Smaller( evaluatedPram );
       
       mCallStack.Pop();
@@ -404,6 +411,7 @@ public class OurSchemVM {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
       } // for
+      
       returnNode = InnerFunction.Smaller_equal( evaluatedPram );
       
       mCallStack.Pop();
@@ -417,6 +425,7 @@ public class OurSchemVM {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
       } // for
+      
       returnNode = InnerFunction.Equal( evaluatedPram );
       
       mCallStack.Pop();
@@ -442,6 +451,7 @@ public class OurSchemVM {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
       } // for
+      
       returnNode = InnerFunction.String_Larger( evaluatedPram );
       mCallStack.Pop();
     } // else if
@@ -453,6 +463,7 @@ public class OurSchemVM {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
       } // for
+      
       returnNode = InnerFunction.String_Smaller( evaluatedPram );
       mCallStack.Pop();
     } // else if
@@ -464,6 +475,7 @@ public class OurSchemVM {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
       } // for
+      
       returnNode = InnerFunction.String_Equal( evaluatedPram );
       mCallStack.Pop();
     } // else if
@@ -516,7 +528,7 @@ public class OurSchemVM {
           } // if
           else {
             returnNode = Node.Generate_Empty();
-          } // els
+          } // else
           
         } // else
       } // else
@@ -535,7 +547,7 @@ public class OurSchemVM {
             executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
           } // try
           catch ( Exception e ) {
-            throw new MainSexpError( "COND format", mNowExcutingSexpNode );
+            throw new MainSexpError( "COND format" );
           } // catch
           
           if ( i < paremeters.size() - 1 ) {
@@ -567,14 +579,14 @@ public class OurSchemVM {
             } // else if
             else {
               if ( returnNode == null ) {
-                throw new MainSexpError( "no return value", mNowExcutingSexpNode );
+                throw new MainSexpError( "no return value" );
               } // if
             } // else
           } // else
           
         } // if
         else {
-          throw new MainSexpError( "COND format", mNowExcutingSexpNode );
+          throw new MainSexpError( "COND format" );
         } // else
       } // for
       
@@ -626,7 +638,7 @@ public class OurSchemVM {
       } // if
       else {
         mFailedList = Sexp;
-        throw new ListError( "attempt to apply non-function", functionBind.Get() );
+        throw new ListError( "attempt to apply non-function" );
       } // else
       
     } // else
@@ -941,7 +953,7 @@ public class OurSchemVM {
       } // else
     } // else
     
-  } // Equal_Content()
+  } // Equal()
   
 } // class OurSchemVM
 

@@ -211,30 +211,32 @@ class InnerFunction {
     
     // check type
     if ( Is_Number( op1.Get() ).Is_Nil() ) {
-      throw new OperationError( "+", op1.Get() );
+      OurSchemVM.Get_Instance().Set_FailedList( op1.Get() );
+      throw new OperationError( "+" );
     } // if
     else if ( Is_Number( op2.Get() ).Is_Nil() ) {
-      throw new OperationError( "+", op2.Get() );
+      OurSchemVM.Get_Instance().Set_FailedList( op2.Get() );
+      throw new OperationError( "+" );
     } // else if
     
     // declare
     if ( op1.Get().mToken.mType == Symbol.sFLOAT ) {
-      float OP1 = Float.parseFloat( op1.Get().Get_Symbol() );
-      float OP2 = Float.parseFloat( op2.Get().Get_Symbol() );
-      float result = OP1 + OP2;
+      float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
+      float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+      float result = n_op1 + n_op2;
       return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
     } // if
     else {
       if ( op2.Get().mToken.mType == Symbol.sFLOAT ) {
-        float OP1 = Float.parseFloat( op1.Get().Get_Symbol() );
-        float OP2 = Float.parseFloat( op2.Get().Get_Symbol() );
-        float result = OP1 + OP2;
+        float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
+        float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+        float result = n_op1 + n_op2;
         return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
       } // if
       else {
-        int OP1 = Integer.parseInt( op1.Get().Get_Symbol() );
-        int OP2 = Integer.parseInt( op2.Get().Get_Symbol() );
-        int result = OP1 + OP2;
+        int n_op1 = Integer.parseInt( op1.Get().Get_Symbol() );
+        int n_op2 = Integer.parseInt( op2.Get().Get_Symbol() );
+        int result = n_op1 + n_op2;
         return new Node( new Token( Integer.toString( result ), Symbol.sINT ) );
       } // else
     } // else
@@ -254,30 +256,32 @@ class InnerFunction {
     
     // check type
     if ( Is_Number( op1.Get() ).Is_Nil() ) {
-      throw new OperationError( "-", op1.Get() );
+      OurSchemVM.Get_Instance().Set_FailedList( op1.Get() );
+      throw new OperationError( "-" );
     } // if
     else if ( Is_Number( op2.Get() ).Is_Nil() ) {
-      throw new OperationError( "-", op2.Get() );
+      OurSchemVM.Get_Instance().Set_FailedList( op2.Get() );
+      throw new OperationError( "-" );
     } // else if
     
     // declare
     if ( op1.Get().mToken.mType == Symbol.sFLOAT ) {
-      float OP1 = Float.parseFloat( op1.Get().Get_Symbol() );
-      float OP2 = Float.parseFloat( op2.Get().Get_Symbol() );
-      float result = OP1 - OP2;
+      float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
+      float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+      float result = n_op1 - n_op2;
       return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
     } // if
     else {
       if ( op2.Get().mToken.mType == Symbol.sFLOAT ) {
-        float OP1 = Float.parseFloat( op1.Get().Get_Symbol() );
-        float OP2 = Float.parseFloat( op2.Get().Get_Symbol() );
-        float result = OP1 - OP2;
+        float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
+        float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+        float result = n_op1 - n_op2;
         return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
       } // if
       else {
-        int OP1 = Integer.parseInt( op1.Get().Get_Symbol() );
-        int OP2 = Integer.parseInt( op2.Get().Get_Symbol() );
-        int result = OP1 - OP2;
+        int n_op1 = Integer.parseInt( op1.Get().Get_Symbol() );
+        int n_op2 = Integer.parseInt( op2.Get().Get_Symbol() );
+        int result = n_op1 - n_op2;
         return new Node( new Token( Integer.toString( result ), Symbol.sINT ) );
       } // else
     } // else
@@ -297,30 +301,32 @@ class InnerFunction {
     
     // check type
     if ( Is_Number( op1.Get() ).Is_Nil() ) {
-      throw new OperationError( "*", op1.Get() );
+      OurSchemVM.Get_Instance().Set_FailedList( op1.Get() );
+      throw new OperationError( "*" );
     } // if
     else if ( Is_Number( op2.Get() ).Is_Nil() ) {
-      throw new OperationError( "*", op2.Get() );
+      OurSchemVM.Get_Instance().Set_FailedList( op2.Get() );
+      throw new OperationError( "*" );
     } // else if
     
     // declare
     if ( op1.Get().mToken.mType == Symbol.sFLOAT ) {
-      float OP1 = Float.parseFloat( op1.Get().Get_Symbol() );
-      float OP2 = Float.parseFloat( op2.Get().Get_Symbol() );
-      float result = OP1 * OP2;
+      float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
+      float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+      float result = n_op1 * n_op2;
       return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
     } // if
     else {
       if ( op2.Get().mToken.mType == Symbol.sFLOAT ) {
-        float OP1 = Float.parseFloat( op1.Get().Get_Symbol() );
-        float OP2 = Float.parseFloat( op2.Get().Get_Symbol() );
-        float result = OP1 * OP2;
+        float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
+        float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+        float result = n_op1 * n_op2;
         return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
       } // if
       else {
-        int OP1 = Integer.parseInt( op1.Get().Get_Symbol() );
-        int OP2 = Integer.parseInt( op2.Get().Get_Symbol() );
-        int result = OP1 * OP2;
+        int n_op1 = Integer.parseInt( op1.Get().Get_Symbol() );
+        int n_op2 = Integer.parseInt( op2.Get().Get_Symbol() );
+        int result = n_op1 * n_op2;
         return new Node( new Token( Integer.toString( result ), Symbol.sINT ) );
       } // else
     } // else
@@ -340,30 +346,32 @@ class InnerFunction {
     
     // check type
     if ( Is_Number( op1.Get() ).Is_Nil() ) {
-      throw new OperationError( "/", op1.Get() );
+      OurSchemVM.Get_Instance().Set_FailedList( op1.Get() );
+      throw new OperationError( "/" );
     } // if
     else if ( Is_Number( op2.Get() ).Is_Nil() ) {
-      throw new OperationError( "/", op2.Get() );
+      OurSchemVM.Get_Instance().Set_FailedList( op2.Get() );
+      throw new OperationError( "/" );
     } // else if
     
     // declare
     if ( op1.Get().mToken.mType == Symbol.sFLOAT ) {
-      float OP1 = Float.parseFloat( op1.Get().Get_Symbol() );
-      float OP2 = Float.parseFloat( op2.Get().Get_Symbol() );
-      float result = OP1 / OP2;
+      float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
+      float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+      float result = n_op1 / n_op2;
       return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
     } // if
     else {
       if ( op2.Get().mToken.mType == Symbol.sFLOAT ) {
-        float OP1 = Float.parseFloat( op1.Get().Get_Symbol() );
-        float OP2 = Float.parseFloat( op2.Get().Get_Symbol() );
-        float result = OP1 / OP2;
+        float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
+        float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+        float result = n_op1 / n_op2;
         return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
       } // if
       else {
-        int OP1 = Integer.parseInt( op1.Get().Get_Symbol() );
-        int OP2 = Integer.parseInt( op2.Get().Get_Symbol() );
-        int result = OP1 / OP2;
+        int n_op1 = Integer.parseInt( op1.Get().Get_Symbol() );
+        int n_op2 = Integer.parseInt( op2.Get().Get_Symbol() );
+        int result = n_op1 / n_op2;
         return new Node( new Token( Integer.toString( result ), Symbol.sINT ) );
       } // else
     } // else
@@ -383,7 +391,7 @@ class InnerFunction {
     } // if
     else {
       return Function.Generate_False();
-    } // els
+    } // else
     
   } // Not()
   
@@ -411,18 +419,20 @@ class InnerFunction {
       
       // check type
       if ( Is_Number( params.elementAt( i ).Get() ).Is_Nil() ) {
-        throw new OperationError( ">", params.elementAt( i ).Get() );
+        OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i ).Get() );
+        throw new OperationError( ">" );
       } // if
       else {
         
         if ( Is_Number( params.elementAt( i - 1 ).Get() ).Is_Nil() ) {
-          throw new OperationError( ">", params.elementAt( i - 1 ).Get() );
+          OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i - 1 ).Get() );
+          throw new OperationError( ">" );
         } // if
         
-        float Op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
-        float Op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
+        float n_op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
+        float n_op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
         
-        if ( Op1 <= Op2 ) {
+        if ( n_op1 <= n_op2 ) {
           return Function.Generate_False();
           
         } // if
@@ -438,18 +448,20 @@ class InnerFunction {
       
       // check type
       if ( Is_Number( params.elementAt( i ).Get() ).Is_Nil() ) {
-        throw new OperationError( ">=", params.elementAt( i ).Get() );
+        OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i ).Get() );
+        throw new OperationError( ">=" );
       } // if
       else {
         
         if ( Is_Number( params.elementAt( i - 1 ).Get() ).Is_Nil() ) {
-          throw new OperationError( ">=", params.elementAt( i - 1 ).Get() );
+          OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i - 1 ).Get() );
+          throw new OperationError( ">=" );
         } // if
         
-        float Op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
-        float Op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
+        float n_op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
+        float n_op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
         
-        if ( Op1 < Op2 ) {
+        if ( n_op1 < n_op2 ) {
           return Function.Generate_False();
           
         } // if
@@ -465,18 +477,20 @@ class InnerFunction {
       
       // check type
       if ( Is_Number( params.elementAt( i ).Get() ).Is_Nil() ) {
-        throw new OperationError( "<", params.elementAt( i ).Get() );
+        OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i ).Get() );
+        throw new OperationError( "<" );
       } // if
       else {
         
         if ( Is_Number( params.elementAt( i - 1 ).Get() ).Is_Nil() ) {
-          throw new OperationError( "<", params.elementAt( i - 1 ).Get() );
+          OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i - 1 ).Get() );
+          throw new OperationError( "<" );
         } // if
         
-        float Op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
-        float Op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
+        float n_op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
+        float n_op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
         
-        if ( Op1 >= Op2 ) {
+        if ( n_op1 >= n_op2 ) {
           return Function.Generate_False();
           
         } // if
@@ -492,18 +506,20 @@ class InnerFunction {
       
       // check type
       if ( Is_Number( params.elementAt( i ).Get() ).Is_Nil() ) {
-        throw new OperationError( "<=", params.elementAt( i ).Get() );
+        OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i ).Get() );
+        throw new OperationError( "<=" );
       } // if
       else {
         
         if ( Is_Number( params.elementAt( i - 1 ).Get() ).Is_Nil() ) {
-          throw new OperationError( "<=", params.elementAt( i - 1 ).Get() );
+          OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i - 1 ).Get() );
+          throw new OperationError( "<=" );
         } // if
         
-        float Op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
-        float Op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
+        float n_op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
+        float n_op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
         
-        if ( Op1 > Op2 ) {
+        if ( n_op1 > n_op2 ) {
           return Function.Generate_False();
           
         } // if
@@ -519,18 +535,20 @@ class InnerFunction {
       
       // check type
       if ( Is_Number( params.elementAt( i ).Get() ).Is_Nil() ) {
-        throw new OperationError( "=", params.elementAt( i ).Get() );
+        OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i ).Get() );
+        throw new OperationError( "=" );
       } // if
       else {
         
         if ( Is_Number( params.elementAt( i - 1 ).Get() ).Is_Nil() ) {
-          throw new OperationError( "=", params.elementAt( i - 1 ).Get() );
+          OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i - 1 ).Get() );
+          throw new OperationError( "=" );
         } // if
         
-        float Op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
-        float Op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
+        float n_op1 = Float.parseFloat( params.elementAt( i - 1 ).Get().Get_Symbol() );
+        float n_op2 = Float.parseFloat( params.elementAt( i ).Get().Get_Symbol() );
         
-        if ( Op1 != Op2 ) {
+        if ( n_op1 != n_op2 ) {
           return Function.Generate_False();
           
         } // if
@@ -547,18 +565,20 @@ class InnerFunction {
       
       // check type
       if ( Is_String( params.elementAt( i ).Get() ).Is_Nil() ) {
-        throw new OperationError( "string=?", params.elementAt( i ).Get() );
+        OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i ).Get() );
+        throw new OperationError( "string=?" );
       } // if
       else {
         
         if ( Is_String( params.elementAt( i - 1 ).Get() ).Is_Nil() ) {
-          throw new OperationError( "string=?", params.elementAt( i - 1 ).Get() );
+          OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i - 1 ).Get() );
+          throw new OperationError( "string=?" );
         } // if
         
-        String Op1 = params.elementAt( i - 1 ).Get().Get_Symbol();
-        String Op2 = params.elementAt( i ).Get().Get_Symbol();
+        String n_op1 = params.elementAt( i - 1 ).Get().Get_Symbol();
+        String n_op2 = params.elementAt( i ).Get().Get_Symbol();
         
-        if ( Op1.compareTo( Op2 ) != 0 ) {
+        if ( n_op1.compareTo( n_op2 ) != 0 ) {
           return Function.Generate_False();
           
         } // if
@@ -575,18 +595,20 @@ class InnerFunction {
       
       // check type
       if ( Is_String( params.elementAt( i ).Get() ).Is_Nil() ) {
-        throw new OperationError( "string>?", params.elementAt( i ).Get() );
+        OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i ).Get() );
+        throw new OperationError( "string>?" );
       } // if
       else {
         
         if ( Is_String( params.elementAt( i - 1 ).Get() ).Is_Nil() ) {
-          throw new OperationError( "string>?", params.elementAt( i - 1 ).Get() );
+          OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i - 1 ).Get() );
+          throw new OperationError( "string>?" );
         } // if
         
-        String Op1 = params.elementAt( i - 1 ).Get().Get_Symbol();
-        String Op2 = params.elementAt( i ).Get().Get_Symbol();
+        String n_op1 = params.elementAt( i - 1 ).Get().Get_Symbol();
+        String n_op2 = params.elementAt( i ).Get().Get_Symbol();
         
-        if ( Op1.compareTo( Op2 ) <= 0 ) {
+        if ( n_op1.compareTo( n_op2 ) <= 0 ) {
           return Function.Generate_False();
           
         } // if
@@ -603,18 +625,20 @@ class InnerFunction {
       
       // check type
       if ( Is_String( params.elementAt( i ).Get() ).Is_Nil() ) {
-        throw new OperationError( "string<?", params.elementAt( i ).Get() );
+        OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i ).Get() );
+        throw new OperationError( "string<?" );
       } // if
       else {
         
         if ( Is_String( params.elementAt( i - 1 ).Get() ).Is_Nil() ) {
-          throw new OperationError( "string<?", params.elementAt( i - 1 ).Get() );
+          OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i - 1 ).Get() );
+          throw new OperationError( "string<?" );
         } // if
         
-        String Op1 = params.elementAt( i - 1 ).Get().Get_Symbol();
-        String Op2 = params.elementAt( i ).Get().Get_Symbol();
+        String n_op1 = params.elementAt( i - 1 ).Get().Get_Symbol();
+        String n_op2 = params.elementAt( i ).Get().Get_Symbol();
         
-        if ( Op1.compareTo( Op2 ) >= 0 ) {
+        if ( n_op1.compareTo( n_op2 ) >= 0 ) {
           return Function.Generate_False();
           
         } // if
@@ -642,14 +666,16 @@ class InnerFunction {
           result.append( tmpString.substring( 1, tmpString.length() ) );
         } // if
         else {
-          throw new OperationError( "String-Append", params.elementAt( i ).Get() );
+          OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( i ).Get() );
+          throw new OperationError( "String-Append" );
         } // else
       } // for
       
       return new Node( new Token( result.toString(), Symbol.sSTRING ) );
     } // if
     else {
-      throw new OperationError( "String-Append", params.elementAt( 0 ).Get() );
+      OurSchemVM.Get_Instance().Set_FailedList( params.elementAt( 0 ).Get() );
+      throw new OperationError( "String-Append" );
     } // else
     
   } // String_Append()
@@ -658,7 +684,7 @@ class InnerFunction {
     // TODO bypass need to let all node be primitive
     
     // change a symbol to a string
-    if ( InnerFunction.Is_Atom( Sexp ).mToken.mType == Symbol.sT ) {
+    if ( Is_Atom( Sexp ).mToken.mType == Symbol.sT ) {
       if ( Sexp.mToken.mType == Symbol.sSYMBOL ) {
         Sexp.mToken.mType = Symbol.sSYMBOL_LEXICAL;
       } // if
