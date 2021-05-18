@@ -751,12 +751,7 @@ public class OurSchemVM {
           } // else if
           else if ( InnerFunction.Is_String( param1 ).Is_T() ) {
             
-            if ( param1.Get_Symbol().compareTo( param2.Get_Symbol() ) == 0 ) {
-              return true;
-            } // if
-            else {
-              return false;
-            } // else
+            return false;
             
           } // else if
           else if ( InnerFunction.Is_symbol( param1 ).Is_T() ) {
