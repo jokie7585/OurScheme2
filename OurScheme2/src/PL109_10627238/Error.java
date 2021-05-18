@@ -125,9 +125,26 @@ class ListError extends Error {
     
   } // EvaluatingError()
   
-  public void Set_MainSexp( Node mainSexp ) {
-    mSexpNode = mainSexp;
-  } // Set_MainSexp()
+  public String Get_Msg() {
+    
+    StringBuffer tmpBuffer = new StringBuffer();
+    tmpBuffer.append( "ERROR (" );
+    tmpBuffer.append( mTypeString );
+    tmpBuffer.append( ") : " );
+    return tmpBuffer.toString();
+    
+  } // Get_Msg()
+  
+} // class ListError
+
+class MainSexpError extends Error {
+  private Node mSexpNode;
+  
+  public MainSexpError( String type, Node Sexp ) {
+    super( type, "" );
+    mSexpNode = Sexp;
+    
+  } // MainSexpError()
   
   public String Get_Msg() {
     
@@ -139,10 +156,7 @@ class ListError extends Error {
     
   } // Get_Msg()
   
-  public Node Get_Sexp() {
-    return mSexpNode;
-  } // Get_Sexp()
-} // class ListError
+} // class MainSexpError
 
 class OperationError extends ListError {
   

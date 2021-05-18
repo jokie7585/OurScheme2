@@ -28,11 +28,11 @@ public class BindingTB {
         
         if ( InnerFunction.Is_List( bonsNode.mL_Child ).mToken.mType == Symbol.sT ) {
           // list or quoted atom
-          throw new ListError( "DEFINE format", null );
+          throw new MainSexpError( "DEFINE format", null );
         } // if
         else if ( bonsNode.mL_Child.mToken.mType != Symbol.sSYMBOL ) {
           // if atom check it is not a primitive
-          throw new ListError( "DEFINE format", null );
+          throw new MainSexpError( "DEFINE format", null );
         } // else
         else {
           // acceptable argument symbol
@@ -40,7 +40,7 @@ public class BindingTB {
           
           for ( int i = 0 ; i < params.size() ; i++ ) {
             if ( params.elementAt( i ).Get_Symbol().equals( bonsNode.mL_Child.Get_Symbol() ) ) {
-              throw new ListError( "DEFINE format", null );
+              throw new MainSexpError( "DEFINE format", null );
             } // if
             
           } // for
@@ -62,7 +62,7 @@ public class BindingTB {
       targetSymbolString = bindingTarget.mL_Child.mToken.mContent;
       Node functioArgsNode = bindingTarget.mR_Child;
       
-      Binding target = get( targetSymbolString );
+      Binding target = I_get( targetSymbolString );
       if ( target == null ) {
         // insert at current binding table
         mBindings.add( new Binding( targetSymbolString, functioArgsNode, bindingSexp ) );
@@ -82,11 +82,11 @@ public class BindingTB {
         
         if ( bindingTarget.mToken.mType != Symbol.sSYMBOL ) {
           // if atom check it is not a primitive
-          throw new ListError( "DEFINE format", null );
+          throw new MainSexpError( "DEFINE format", null );
         } // if
         
         targetSymbolString = bindingTarget.mToken.mContent;
-        Binding target = get( targetSymbolString );
+        Binding target = I_get( targetSymbolString );
         
         // Set a atom symbol binding need to evaluate the bindingSexp
         Node bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp );
@@ -106,7 +106,7 @@ public class BindingTB {
       else {
         // a non pure list
         
-        throw new ListError( "DEFINE format", null );
+        throw new MainSexpError( "DEFINE format", null );
       } // else
       
     } // else
@@ -144,7 +144,7 @@ public class BindingTB {
   } // Set_innerBinding()
   
   // inner get
-  private Binding get( String symbol ) {
+  private Binding I_get( String symbol ) {
     
     for ( int i = 0 ; i < mBindings.size() ; i++ ) {
       if ( mBindings.elementAt( i ).mSymbol.equals( symbol ) ) {
@@ -168,7 +168,7 @@ public class BindingTB {
     } // while
     
     return null;
-  } // Get()
+  } // I_get()
 } // class BindingTB
 
 class Binding {

@@ -40,7 +40,14 @@ public class Main {
         } // catch
         catch ( ListError e ) {
           System.out.print( e.Get_Msg() );
-          Interpreter.NewPrinter( e.Get_Sexp() );
+          Interpreter.NewPrinter( OurSchemVM.Get_Instance().Get_FailedList() );
+          System.out.println( "" );
+          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
+          MyScanner.Get_Instance().ErrorReset();
+        } // catch
+        catch ( MainSexpError e ) {
+          System.out.print( e.Get_Msg() );
+          Interpreter.NewPrinter( OurSchemVM.Get_Instance().Get_FailedMainSexp() );
           System.out.println( "" );
           OurSchemVM.Get_Instance().mCallStack.Exception_Process();
           MyScanner.Get_Instance().ErrorReset();

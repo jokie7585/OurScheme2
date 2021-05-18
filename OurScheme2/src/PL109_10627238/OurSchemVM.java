@@ -5,6 +5,7 @@ import java.util.Vector;
 public class OurSchemVM {
   private static OurSchemVM sOurSchemVM_S;
   private Node mNowExcutingSexpNode;
+  private Node mFailedList;
   public CallStack mCallStack;
   public Memory mMemory;
   
@@ -35,6 +36,14 @@ public class OurSchemVM {
   public boolean Is_CallStackTopLevel() {
     return mCallStack.Is_TopLevel();
   } // Is_CallStackTopLevel()
+  
+  public Node Get_FailedList() {
+    return mFailedList;
+  } // Get_FailedList()
+  
+  public Node Get_FailedMainSexp() {
+    return mNowExcutingSexpNode;
+  } // Get_FailedMainSexp()
   
   public Node Apply( Node Sexp ) throws Throwable {
     mNowExcutingSexpNode = Sexp;
@@ -72,7 +81,7 @@ public class OurSchemVM {
       } // if
       else {
         // TODO if non-list throw original List or Current List
-        
+        mFailedList = Sexp;
         throw new ListError( "non-list", Sexp );
         // throw new ListError( "non-list", "", mNowExcutingSexpNode );
       } // else
@@ -299,11 +308,11 @@ public class OurSchemVM {
           returnNode = Node.Generate_String( bindTargetString + " defined" );
         } // try
         catch ( ListError e ) {
-          e.Set_MainSexp( mNowExcutingSexpNode );
-          throw e;
+          throw new MainSexpError( "DEFINE format", mNowExcutingSexpNode );
+          
         } // catch
         catch ( PrimitiveRedefineError e ) {
-          throw new ListError( "DEFINE format", mNowExcutingSexpNode );
+          throw new MainSexpError( "DEFINE format", mNowExcutingSexpNode );
         } // catch
         
       } // if
@@ -526,7 +535,7 @@ public class OurSchemVM {
             executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
           } // try
           catch ( Exception e ) {
-            throw new ListError( "COND format", mNowExcutingSexpNode );
+            throw new MainSexpError( "COND format", mNowExcutingSexpNode );
           } // catch
           
           if ( i < paremeters.size() - 1 ) {
@@ -558,14 +567,14 @@ public class OurSchemVM {
             } // else if
             else {
               if ( returnNode == null ) {
-                throw new ListError( "no return value", mNowExcutingSexpNode );
+                throw new MainSexpError( "no return value", mNowExcutingSexpNode );
               } // if
             } // else
           } // else
           
         } // if
         else {
-          throw new ListError( "COND format", mNowExcutingSexpNode );
+          throw new MainSexpError( "COND format", mNowExcutingSexpNode );
         } // else
       } // for
       
@@ -616,6 +625,7 @@ public class OurSchemVM {
         mCallStack.Pop();
       } // if
       else {
+        mFailedList = Sexp;
         throw new ListError( "attempt to apply non-function", functionBind.Get() );
       } // else
       
@@ -1002,13 +1012,13 @@ class CallStack {
     // push a stack
     mStack.add( new BindingTB( mStack.elementAt( mStack.size() - 1 ) ) );
     
-  } // push()
+  } // Push()
   
   public void Pop() {
     // pop a stack
     mStack.removeElementAt( mStack.size() - 1 );
     
-  } // pop()
+  } // Pop()
   
   public boolean Is_TopLevel() {
     if ( mStack.size() > 1 ) {
