@@ -112,9 +112,10 @@ public class Interpreter {
       NewSubprinter( root.mL_Child.Get(), base + 1 );
       
       // print through bone
-      Node boneNode = root.mR_Child.Get();
+      Node boneNode = root.mR_Child;
       
       while ( boneNode != null ) {
+        boneNode = boneNode.Get();
         
         if ( boneNode.mL_Child != null ) {
           if ( boneNode.mL_Child.Is_Dot() ) {
@@ -159,6 +160,7 @@ public class Interpreter {
       Node boneNode = root.mR_Child;
       
       while ( boneNode != null ) {
+        boneNode = boneNode.Get();
         
         if ( boneNode.mL_Child != null ) {
           if ( boneNode.mL_Child.Is_Dot() ) {

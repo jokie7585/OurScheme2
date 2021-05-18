@@ -606,7 +606,7 @@ public class OurSchemVM {
       
       if ( mCallStack.Is_TopLevel() ) {
         mCallStack.Init();
-        returnNode = Node.Generate_String( "environment-cleaned" );
+        returnNode = Node.Generate_String( "environment cleaned" );
       } // if
       else {
         throw new EvaluatingError( "level of CLEAN-ENVIRONMENT", "" );
