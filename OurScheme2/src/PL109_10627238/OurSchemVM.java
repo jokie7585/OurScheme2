@@ -303,6 +303,8 @@ public class OurSchemVM {
       // no need to push a new call stack
       
       if ( mCallStack.Is_TopLevel() ) {
+        mCallStack.Push();
+        
         try {
           Vector<Node> paremeters;
           try {
@@ -326,6 +328,7 @@ public class OurSchemVM {
           throw new MainSexpError( "DEFINE format" );
         } // catch
         
+        mCallStack.Pop();
       } // if
       else {
         throw new EvaluatingError( "level of DEFINE", "" );
@@ -663,7 +666,7 @@ public class OurSchemVM {
   private Vector<Node> ParseParemeter( String fcName, int amount, Node PTree, boolean l ) throws Throwable {
     Vector<Node> paremeters = new Vector<Node>();
     
-    while ( PTree != null ) {
+    while ( PTree != null && !PTree.Is_Nil() ) {
       paremeters.add( PTree.mL_Child );
       // go down the bones
       PTree = PTree.mR_Child;
@@ -1042,12 +1045,12 @@ class CallStack {
   } // Get_Binding()
   
   public String Set_Binding( Node bindingTarget, Node Sexp ) throws Throwable {
-    BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
+    BindingTB tmp = mStack.elementAt( 0 );
     return tmp.Set( bindingTarget, Sexp );
   } // Set_Binding()
   
   private void Set_Binding_inner( String bindingTarget, boolean isFunc ) {
-    BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
+    BindingTB tmp = mStack.elementAt( 0 );
     tmp.Set_innerBinding( bindingTarget, isFunc );
   } // Set_Binding_inner()
   

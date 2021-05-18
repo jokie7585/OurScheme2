@@ -36,21 +36,21 @@ public class Main {
           System.out.println( e.Get_Msg() );
           System.out.println( "" );
           OurSchemVM.Get_Instance().mCallStack.Exception_Process();
-          MyScanner.Get_Instance().ErrorReset();
+          System.out.print( "> " );
         } // catch
         catch ( ListError e ) {
           System.out.print( e.Get_Msg() );
           Interpreter.NewPrinter( OurSchemVM.Get_Instance().Get_FailedList() );
           System.out.println( "" );
           OurSchemVM.Get_Instance().mCallStack.Exception_Process();
-          MyScanner.Get_Instance().ErrorReset();
+          System.out.print( "> " );
         } // catch
         catch ( MainSexpError e ) {
           System.out.print( e.Get_Msg() );
           Interpreter.NewPrinter( OurSchemVM.Get_Instance().Get_FailedMainSexp() );
           System.out.println( "" );
           OurSchemVM.Get_Instance().mCallStack.Exception_Process();
-          MyScanner.Get_Instance().ErrorReset();
+          System.out.print( "> " );
         } // catch
       } // while
       
