@@ -372,6 +372,10 @@ class InnerFunction {
     if ( op1.Get().mToken.mType == Symbol.sFLOAT ) {
       float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
       float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+      if ( n_op2 == 0 ) {
+        throw new EvaluatingError( "division by zero", "/" );
+      } // if
+      
       float result = n_op1 / n_op2;
       return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
     } // if
@@ -379,12 +383,20 @@ class InnerFunction {
       if ( op2.Get().mToken.mType == Symbol.sFLOAT ) {
         float n_op1 = Float.parseFloat( op1.Get().Get_Symbol() );
         float n_op2 = Float.parseFloat( op2.Get().Get_Symbol() );
+        if ( n_op2 == 0 ) {
+          throw new EvaluatingError( "division by zero", "/" );
+        } // if
+        
         float result = n_op1 / n_op2;
         return new Node( new Token( Float.toString( result ), Symbol.sFLOAT ) );
       } // if
       else {
         int n_op1 = Integer.parseInt( op1.Get().Get_Symbol() );
         int n_op2 = Integer.parseInt( op2.Get().Get_Symbol() );
+        if ( n_op2 == 0 ) {
+          throw new EvaluatingError( "division by zero", "/" );
+        } // if
+        
         int result = n_op1 / n_op2;
         return new Node( new Token( Integer.toString( result ), Symbol.sINT ) );
       } // else
