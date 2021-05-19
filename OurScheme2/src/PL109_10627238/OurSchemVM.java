@@ -743,7 +743,8 @@ public class OurSchemVM {
       } // if
       else {
         mFailedList = Sexp;
-        throw new EvaluatingError( "attempt to apply non-function", functionBind.Get().Get_Symbol() );
+        Set_FailedList( functionBind.Get() );
+        throw new ListError( "attempt to apply non-function" );
       } // else
       
     } // else
