@@ -631,6 +631,11 @@ public class OurSchemVM {
           if ( InnerFunction.Is_List( paremeters.elementAt( i ) ).Is_Nil() ) {
             throw new MainSexpError( "COND format" );
           } // if
+          else {
+            // test all list has at least two symbol
+            
+            Vector<Node> executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
+          } // else
         } // for
         
       } // try
@@ -702,10 +707,10 @@ public class OurSchemVM {
     } // else if
     else if ( funcnName.equals( "clean-environment" ) ) {
       // no need to push a new call stack
-      Vector<Node> paremeters = ParseParemeter( "clean-environment", 0, functionArgsSexp, false );
       
       if ( mCallStack.Is_TopLevel() ) {
         mCallStack.Init();
+        ParseParemeter( "clean-environment", 0, functionArgsSexp, false );
         returnNode = Node.Generate_String( "environment cleaned" );
       } // if
       else {
@@ -714,7 +719,6 @@ public class OurSchemVM {
     } // else if
     else if ( funcnName.equals( "exit" ) ) {
       // no need to push a new call stack
-      Vector<Node> paremeters = ParseParemeter( "exit", 0, functionArgsSexp, false );
       
       if ( mCallStack.Is_TopLevel() ) {
         // check no argument
