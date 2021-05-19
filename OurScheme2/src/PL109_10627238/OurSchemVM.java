@@ -614,7 +614,8 @@ public class OurSchemVM {
             returnNode = Evaluate( parems.elementAt( 2 ) );
           } // if
           else {
-            throw new MainSexpError( "no return value" );
+            mFailedList = Sexp;
+            throw new ListError( "no return value" );
           } // else
           
         } // else
@@ -629,7 +630,8 @@ public class OurSchemVM {
         paremeters = ParseParemeter( "cond", 1, functionArgsSexp, true );
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           if ( InnerFunction.Is_List( paremeters.elementAt( i ) ).Is_Nil() ) {
-            throw new MainSexpError( "COND format" );
+            mFailedList = Sexp;
+            throw new ListError( "COND format" );
           } // if
           else {
             // test all list has at least two symbol
@@ -640,7 +642,8 @@ public class OurSchemVM {
         
       } // try
       catch ( EvaluatingError e ) {
-        throw new MainSexpError( "COND format" );
+        mFailedList = Sexp;
+        throw new ListError( "COND format" );
       } // catch
       
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
@@ -651,7 +654,8 @@ public class OurSchemVM {
             executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
           } // try
           catch ( EvaluatingError e ) {
-            throw new MainSexpError( "COND format" );
+            mFailedList = Sexp;
+            throw new ListError( "COND format" );
           } // catch
           
           if ( i < paremeters.size() - 1 ) {
@@ -683,14 +687,16 @@ public class OurSchemVM {
             } // else if
             else {
               if ( returnNode == null ) {
-                throw new MainSexpError( "no return value" );
+                mFailedList = Sexp;
+                throw new ListError( "no return value" );
               } // if
             } // else
           } // else
           
         } // if
         else {
-          throw new MainSexpError( "COND format" );
+          mFailedList = Sexp;
+          throw new ListError( "COND format" );
         } // else
       } // for
       
