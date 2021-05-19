@@ -184,7 +184,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "+" );
         } // if
       } // for
@@ -203,7 +203,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "-" );
         } // if
       } // for
@@ -222,7 +222,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "*" );
         } // if
       } // for
@@ -241,7 +241,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "/" );
         } // if
       } // for
@@ -396,7 +396,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( ">" );
         } // if
       } // for
@@ -417,7 +417,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( ">=" );
         } // if
       } // for
@@ -438,7 +438,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "<" );
         } // if
       } // for
@@ -459,7 +459,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "<=" );
         } // if
       } // for
@@ -480,7 +480,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "=" );
         } // if
       } // for
@@ -500,7 +500,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "string-append" );
         } // if
       } // for
@@ -520,7 +520,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "string>?" );
         } // if
       } // for
@@ -539,7 +539,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "string<?" );
         } // if
       } // for
@@ -558,7 +558,7 @@ public class OurSchemVM {
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
-          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          Set_FailedList( evaluatedPram.elementAt( i ).Get() );
           throw new OperationError( "string=?" );
         } // if
       } // for
@@ -865,6 +865,9 @@ public class OurSchemVM {
             } // else
             
           } // else if
+          else if ( InnerFunction.Is__Boolean( param1 ).Is_T() ) {
+            return true;
+          }
           else {
             throw new EvaluatingError( "Warning", "should not has the case" );
           } // else
@@ -972,6 +975,9 @@ public class OurSchemVM {
             } // else
             
           } // else if
+          else if ( InnerFunction.Is__Boolean( param1 ).Is_T() ) {
+            return true;
+          }
           else {
             throw new EvaluatingError( "Warning", "should not has the case" );
           } // else
