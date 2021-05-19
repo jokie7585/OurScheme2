@@ -65,7 +65,13 @@ class InnerFunction {
   
   public static Node Cdr( Node Sexp ) throws Throwable {
     if ( Is_Pair( Sexp ).Is_T() ) {
-      return Sexp.Get().Get_R_C();
+      if ( Sexp.Get().Get_R_C() == null ) {
+        return Function.Generate_False();
+      } // if
+      else {
+        return Sexp.Get().Get_R_C();
+      } // else
+      
     } // if
     else {
       OurSchemVM.Get_Instance().Set_FailedList( Sexp );

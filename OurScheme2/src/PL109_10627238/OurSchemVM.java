@@ -182,6 +182,13 @@ public class OurSchemVM {
         
       } // for
       
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "+" );
+        } // if
+      } // for
+      
       returnNode = InnerFunction.Add( evaluatedPram );
       mCallStack.Pop();
     } // else if
@@ -192,6 +199,13 @@ public class OurSchemVM {
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
+      } // for
+      
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "-" );
+        } // if
       } // for
       
       returnNode = InnerFunction.Sub( evaluatedPram );
@@ -206,6 +220,13 @@ public class OurSchemVM {
         
       } // for
       
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "*" );
+        } // if
+      } // for
+      
       returnNode = InnerFunction.Mul( evaluatedPram );
       mCallStack.Pop();
     } // else if
@@ -216,6 +237,13 @@ public class OurSchemVM {
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
+      } // for
+      
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "/" );
+        } // if
       } // for
       
       returnNode = InnerFunction.Div( evaluatedPram );
@@ -360,9 +388,17 @@ public class OurSchemVM {
       
       Vector<Node> paremeters = ParseParemeter( ">", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
+      
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
+      } // for
+      
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( ">" );
+        } // if
       } // for
       
       returnNode = InnerFunction.Larger( evaluatedPram );
@@ -379,6 +415,13 @@ public class OurSchemVM {
         
       } // for
       
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( ">=" );
+        } // if
+      } // for
+      
       returnNode = InnerFunction.Larger_equal( evaluatedPram );
       
       mCallStack.Pop();
@@ -391,6 +434,13 @@ public class OurSchemVM {
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
+      } // for
+      
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "<" );
+        } // if
       } // for
       
       returnNode = InnerFunction.Smaller( evaluatedPram );
@@ -407,6 +457,13 @@ public class OurSchemVM {
         
       } // for
       
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "<=" );
+        } // if
+      } // for
+      
       returnNode = InnerFunction.Smaller_equal( evaluatedPram );
       
       mCallStack.Pop();
@@ -419,6 +476,13 @@ public class OurSchemVM {
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
+      } // for
+      
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "=" );
+        } // if
       } // for
       
       returnNode = InnerFunction.Equal( evaluatedPram );
@@ -434,6 +498,13 @@ public class OurSchemVM {
         
       } // for
       
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "string-append" );
+        } // if
+      } // for
+      
       returnNode = InnerFunction.String_Append( evaluatedPram );
       
       mCallStack.Pop();
@@ -445,6 +516,13 @@ public class OurSchemVM {
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
+      } // for
+      
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "string>?" );
+        } // if
       } // for
       
       returnNode = InnerFunction.String_Larger( evaluatedPram );
@@ -459,6 +537,13 @@ public class OurSchemVM {
         
       } // for
       
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "string<?" );
+        } // if
+      } // for
+      
       returnNode = InnerFunction.String_Smaller( evaluatedPram );
       mCallStack.Pop();
     } // else if
@@ -469,6 +554,13 @@ public class OurSchemVM {
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
         
+      } // for
+      
+      for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
+        if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
+          OurSchemVM.Get_Instance().Set_FailedList( evaluatedPram.elementAt( i ).Get() );
+          throw new OperationError( "string=?" );
+        } // if
       } // for
       
       returnNode = InnerFunction.String_Equal( evaluatedPram );
