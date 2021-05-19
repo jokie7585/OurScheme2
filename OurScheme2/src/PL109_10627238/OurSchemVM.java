@@ -627,6 +627,12 @@ public class OurSchemVM {
       Vector<Node> paremeters;
       try {
         paremeters = ParseParemeter( "cond", 1, functionArgsSexp, true );
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          if ( InnerFunction.Is_List( paremeters.elementAt( i ) ).Is_Nil() ) {
+            throw new MainSexpError( "COND format" );
+          } // if
+        } // for
+        
       } // try
       catch ( EvaluatingError e ) {
         throw new MainSexpError( "COND format" );

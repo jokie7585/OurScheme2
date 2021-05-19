@@ -48,7 +48,7 @@ public class MyScanner {
   
   public void ErrorReset() throws Throwable {
     // delete remained line
-    mTokenStream = new InputLineProcessor( "" );
+    mTokenStream = null;
     mLine = 0;
     
     // read in new line
