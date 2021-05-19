@@ -932,7 +932,7 @@ public class OurSchemVM {
         else {
           return false;
         } // else
-      } // else if
+      } // if
       else {
         return Equal( param1.Get(), param2.Get() );
       } // else
