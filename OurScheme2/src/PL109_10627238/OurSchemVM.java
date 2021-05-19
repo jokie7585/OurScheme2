@@ -923,26 +923,9 @@ public class OurSchemVM {
   private boolean Equal( Node param1, Node param2 ) throws Throwable {
     
     if ( param1.mToken.mType == Symbol.sBINDING && param1.mToken.mType == Symbol.sBINDING ) {
-      if ( param1.Get().Is_Dot() && param2.Get().Is_Dot() ) {
-        if ( param1.Get() == param2.Get() ) {
-          return true;
-        } // if
-        else {
-          return false;
-        } // else
-        
-      } // if
-      else if ( ( param1.Get().mToken.mType == Symbol.sPROCEDUREL )
+      
+      if ( ( param1.Get().mToken.mType == Symbol.sPROCEDUREL )
           && ( param2.Get().mToken.mType == Symbol.sPROCEDUREL ) ) {
-        if ( param1.Get() == param2.Get() ) {
-          return true;
-        } // if
-        else {
-          return false;
-        } // else
-      } // else if
-      else if ( ( param1.Get().mToken.mType == Symbol.sSTRING )
-          && ( param2.Get().mToken.mType == Symbol.sSTRING ) ) {
         if ( param1.Get() == param2.Get() ) {
           return true;
         } // if

@@ -736,38 +736,21 @@ class InnerFunction {
     // change all symbol to lexical value
     // TODO if String and lexical value is not difference
     
-    if ( Sexp.mL_Child.Is_Dot() ) {
-      Sequentialize( Sexp.mL_Child );
-    } // if
-    else {
+    if ( Sexp != null ) {
       
-      Node bonse = Sexp;
-      
-      while ( bonse != null ) {
+      if ( Sexp.Is_Dot() ) {
         
-        if ( bonse.mL_Child != null ) {
-          
-          if ( bonse.mL_Child.Is_Dot() ) {
-            Sequentialize( bonse.mL_Child );
-          } // if
-          else {
-            
-            if ( bonse.mL_Child.mToken.mType == Symbol.sSYMBOL ) {
-              bonse.mL_Child.mToken.mType = Symbol.sSYMBOL_LEXICAL;
-            } // if
-            
-          } // else
-          
+        Sequentialize( Sexp.mL_Child );
+        Sequentialize( Sexp.mR_Child );
+        
+      } // if
+      else {
+        if ( Sexp.mToken.mType == Symbol.sSYMBOL ) {
+          Sexp.mToken.mType = Symbol.sSYMBOL_LEXICAL;
         } // if
-        else {
-          if ( bonse.mToken.mType == Symbol.sSYMBOL ) {
-            bonse.mToken.mType = Symbol.sSYMBOL_LEXICAL;
-          } // if
-        } // else
-        
-        bonse = bonse.mR_Child;
-      } // while
+      } // else
       
-    } // else
+    } // if
+    
   } // Sequentialize()
 } // class InnerFunction
