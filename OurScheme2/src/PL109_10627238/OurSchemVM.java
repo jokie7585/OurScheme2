@@ -867,7 +867,7 @@ public class OurSchemVM {
           } // else if
           else if ( InnerFunction.Is__Boolean( param1 ).Is_T() ) {
             return true;
-          }
+          } // else if
           else {
             throw new EvaluatingError( "Warning", "should not has the case" );
           } // else
@@ -977,7 +977,7 @@ public class OurSchemVM {
           } // else if
           else if ( InnerFunction.Is__Boolean( param1 ).Is_T() ) {
             return true;
-          }
+          } // else if
           else {
             throw new EvaluatingError( "Warning", "should not has the case" );
           } // else
