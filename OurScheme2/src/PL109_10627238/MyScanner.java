@@ -48,7 +48,10 @@ public class MyScanner {
   
   public void ErrorReset() throws Throwable {
     // delete remained line
+    mTokenStream = new InputLineProcessor( "" );
     mLine = 0;
+    
+    // read in new line
     System.out.print( "> " );
     ReadInALine();
   } // ErrorReset()
@@ -83,6 +86,12 @@ public class MyScanner {
       
     } // if
     else {
+      // hasNext will process the end of file character
+      // so in PAL
+      // if you dont init the mTokenStream
+      // // parser will try to get the unsafe input
+      // // because process not block by input when program run in back
+      // // // (equal? 15 15)( . 5)<<
       if ( mIs_EOF == false ) {
         mIs_EOF = true;
       } // if
