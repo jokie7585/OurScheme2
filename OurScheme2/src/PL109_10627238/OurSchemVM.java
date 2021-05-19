@@ -807,8 +807,7 @@ public class OurSchemVM {
     
     if ( param1.mToken.mType == Symbol.sBINDING && param1.mToken.mType == Symbol.sBINDING ) {
       
-      if ( param1.Get().Is_Dot() || param2.Get().Is_Dot() || param1.Get().mToken.mType == Symbol.sPROCEDUREL
-          || param2.Get().mToken.mType == Symbol.sPROCEDUREL ) {
+      if ( param1.Get().Is_Dot() && param2.Get().Is_Dot() ) {
         if ( param1.Get() == param2.Get() ) {
           return true;
         } // if
@@ -817,6 +816,24 @@ public class OurSchemVM {
         } // else
         
       } // if
+      else if ( ( param1.Get().mToken.mType == Symbol.sPROCEDUREL )
+          && ( param2.Get().mToken.mType == Symbol.sPROCEDUREL ) ) {
+        if ( param1.Get() == param2.Get() ) {
+          return true;
+        } // if
+        else {
+          return false;
+        } // else
+      } // else if
+      else if ( ( param1.Get().mToken.mType == Symbol.sSTRING )
+          && ( param2.Get().mToken.mType == Symbol.sSTRING ) ) {
+        if ( param1.Get() == param2.Get() ) {
+          return true;
+        } // if
+        else {
+          return false;
+        } // else
+      } // else if
       else {
         return Eqv( param1.Get(), param2.Get() );
       } // else
@@ -872,7 +889,7 @@ public class OurSchemVM {
               throw new EvaluatingError( "Warning", "unDereference symbol!" );
             } // if
             else {
-              if ( param1.Get_Symbol().compareTo( param1.Get_Symbol() ) == 0 ) {
+              if ( param1.Get_Symbol().compareTo( param2.Get_Symbol() ) == 0 ) {
                 return true;
               } // if
               else {
