@@ -237,7 +237,16 @@ public class Interpreter {
       return "#t";
     } // else if
     else if ( token.mType == Symbol.sPROCEDUREL ) {
-      return "#<procedure " + token.mContent + ">";
+      if ( token.mContent.charAt( 0 ) == '(' ) {
+        return "#<procedure " + token.mContent.substring( 1, token.mContent.length() - 1 ) + ">";
+      } // if
+      else if ( token.mContent.charAt( 0 ) == ')' ) {
+        return "#<procedure " + token.mContent.substring( 2 ) + ">";
+      } // else if
+      else {
+        return "#<procedure " + token.mContent + ">";
+      } // else
+      
     } // else if
     else if ( token.mType == Symbol.sEMPTYOBJ ) {
       return "";

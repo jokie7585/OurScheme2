@@ -98,6 +98,12 @@ class FinishProgramException extends Error {
 
 // project2 error Evaluate Error
 
+class IncorrectArgNumError extends Error {
+  IncorrectArgNumError( String msg ) {
+    super( "incorrect number of arguments", msg );
+  } // IncorrectArgNumError()
+} // class IncorrectArgNumError
+
 class EvaluatingError extends Error {
   public EvaluatingError( String type, String msg ) {
     super( type, msg );
@@ -134,6 +140,13 @@ class ListError extends Error {
   } // Get_Msg()
   
 } // class ListError
+
+class FormatError extends ListError {
+  public FormatError( String type ) {
+    super( type );
+  } // FormatError()
+  
+} // class FormatError
 
 class MainSexpError extends Error {
   
@@ -177,3 +190,12 @@ class PrimitiveRedefineError extends Error {
   } // PrimitiveRedefineError()
   
 } // class PrimitiveRedefineError
+
+// project 3
+
+class VerboseException extends Exception {
+  public VerboseException() {
+    
+  } // VerboseException()
+  
+} // class

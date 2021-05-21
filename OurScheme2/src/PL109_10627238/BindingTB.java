@@ -28,7 +28,7 @@ public class BindingTB {
       // because a list is not symbol as primitive
       Vector<Node> params = new Vector<Node>();
       
-      Node bonsNode = bindingTarget;
+      Node bonsNode = bindingTarget.mR_Child;
       while ( bonsNode != null ) {
         
         if ( InnerFunction.Is_List( bonsNode.mL_Child ).mToken.mType == Symbol.sT ) {
@@ -65,16 +65,33 @@ public class BindingTB {
       // start define process
       
       targetSymbolString = bindingTarget.mL_Child.mToken.mContent;
-      Node functioArgsNode = bindingTarget.mR_Child;
+      Vector<Node> functionBody = OurSchemVM.ParseParemeter( "", 0, bindingSexp, true );
       
-      Binding target = I_get( targetSymbolString );
-      if ( target == null ) {
-        // insert at current binding table
-        mBindings.add( new Binding( targetSymbolString, functioArgsNode, bindingSexp ) );
+      // process project 3 special case
+      // // define function binding with special lambda syntax
+      Node func = OurSchemVM.Get_Instance().Evaluate( InnerFunction.Car( functionBody.elementAt( 0 ) ) );
+      
+      if ( functionBody.size() == 1 && func.Get_Symbol().equals( "(lambda)" ) ) {
+        Binding target = I_get( targetSymbolString );
+        if ( target == null ) {
+          // insert at current binding table
+          mBindings.add( new Binding( targetSymbolString, func ) );
+        } // if
+        else {
+          // update binding
+          target.Set( func );
+        } // else
       } // if
       else {
-        // update binding
-        target.Set( functioArgsNode, bindingSexp );
+        Binding target = I_get( targetSymbolString );
+        if ( target == null ) {
+          // insert at current binding table
+          mBindings.add( new Binding( targetSymbolString, params, functionBody ) );
+        } // if
+        else {
+          // update binding
+          target.Set( params, functionBody );
+        } // else
       } // else
       
       return targetSymbolString;
@@ -90,11 +107,20 @@ public class BindingTB {
           throw new MainSexpError( "DEFINE format" );
         } // if
         
+        try {
+          // if define a symbol
+          // the define format allow only one argument on bindingSexp
+          OurSchemVM.ParseParemeter( "", 1, bindingSexp, false );
+        } // try
+        catch ( Throwable e ) {
+          throw new MainSexpError( "DEFINE format" );
+        } // catch
+        
         targetSymbolString = bindingTarget.mToken.mContent;
         Binding target = I_get( targetSymbolString );
         
         // Set a atom symbol binding need to evaluate the bindingSexp
-        Node bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp );
+        Node bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child );
         
         if ( target == null ) {
           // insert at current binding table
@@ -117,6 +143,119 @@ public class BindingTB {
     } // else
     
   } // Set()
+  
+  public String Set_local( Node bindingTarget, Node bindingSexp ) throws Throwable {
+    String targetSymbolString = "";
+    
+    // check if function or symbol bind
+    // list include the quoted atom
+    if ( InnerFunction.Is_List( bindingTarget ).mToken.mType == Symbol.sT ) {
+      // function binding
+      throw new EvaluatingError( "warning", "define can not have list as argument" );
+      
+      // check if quote atom as function args in a list
+      // because a list is not symbol as primitive
+      
+      // Vector<Node> params = new Vector<Node>();
+      //
+      // Node bonsNode = bindingTarget;
+      // while ( bonsNode != null ) {
+      //
+      // if ( InnerFunction.Is_List( bonsNode.mL_Child ).mToken.mType ==
+      // Symbol.sT ) {
+      // // list or quoted atom
+      // throw new MainSexpError( "DEFINE format" );
+      // } // if
+      // else if ( bonsNode.mL_Child.mToken.mType != Symbol.sSYMBOL ) {
+      // // if atom check it is not a primitive
+      // throw new MainSexpError( "DEFINE format" );
+      // } // else if
+      // else {
+      // // acceptable argument symbol
+      // // check if reuse of symbol
+      //
+      // for ( int i = 0 ; i < params.size() ; i++ ) {
+      // if ( params.elementAt( i ).Get_Symbol().equals(
+      // bonsNode.mL_Child.Get_Symbol() ) ) {
+      // throw new MainSexpError( "DEFINE format" );
+      // } // if
+      //
+      // } // for
+      //
+      // params.add( bonsNode.Get_L_C() );
+      // } // else
+      //
+      // bonsNode = bonsNode.mR_Child;
+      // } // while
+      
+      // TODO check all function call
+      // // any unbound symbol
+      // // // except the symbol in the argument list
+      // // any non pure list
+      // // any function call with correct argument count
+      
+      // start define process
+      
+      // targetSymbolString = bindingTarget.mL_Child.mToken.mContent;
+      // Node functioArgsNode = bindingTarget.mR_Child;
+      // Vector<Node> argumentList = OurSchemVM.ParseParemeter( "", 0,
+      // functioArgsNode, true );
+      // Vector<Node> functionBody = OurSchemVM.ParseParemeter( "", 0,
+      // bindingSexp, true );
+      //
+      // Binding target = I_get_local( targetSymbolString );
+      // if ( target == null ) {
+      // // insert at current binding table
+      // mBindings.add( new Binding( targetSymbolString, argumentList,
+      // functionBody ) );
+      // } // if
+      // else {
+      // // update binding
+      // target.Set( argumentList, functionBody );
+      // } // else
+      //
+      // return targetSymbolString;
+    } // if
+    else {
+      // process atom or pair
+      
+      if ( InnerFunction.Is_Atom( bindingTarget ).mToken.mType == Symbol.sT ) {
+        // a non quote atom
+        
+        if ( bindingTarget.mToken.mType != Symbol.sSYMBOL ) {
+          // if atom check it is not a primitive
+          throw new MainSexpError( "DEFINE format" );
+        } // if
+        
+        targetSymbolString = bindingTarget.mToken.mContent;
+        Binding target = I_get_local( targetSymbolString );
+        
+        // Set a atom symbol binding need to evaluate the bindingSexp
+        Node bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp );
+        
+        if ( target == null ) {
+          // insert at current binding table
+          mBindings.add( new Binding( targetSymbolString, bindingValue ) );
+        } // if
+        else {
+          // update binding
+          target.Set( bindingValue );
+        } // else
+        
+        System.out.println( "on seting " );
+        
+        return targetSymbolString;
+        
+      } // if
+      else {
+        // a non pure list
+        
+        throw new MainSexpError( "DEFINE format" );
+      } // else
+      
+    } // else
+    
+  } // Set_local()
   
   public Binding Get( String symbol ) throws Throwable {
     
@@ -160,20 +299,34 @@ public class BindingTB {
     
     BindingTB preTb = mPreTable;
     
-    while ( mPreTable != null ) {
+    while ( preTb != null ) {
       for ( int i = 0 ; i < preTb.mBindings.size() ; i++ ) {
         if ( preTb.mBindings.elementAt( i ).mSymbol.equals( symbol ) ) {
           return preTb.mBindings.elementAt( i );
         } // if
         
       } // for
-      //
+      
       preTb = preTb.mPreTable;
       
     } // while
     
     return null;
   } // I_get()
+  
+  // inner get
+  private Binding I_get_local( String symbol ) {
+    
+    for ( int i = 0 ; i < mBindings.size() ; i++ ) {
+      if ( mBindings.elementAt( i ).mSymbol.equals( symbol ) ) {
+        return mBindings.elementAt( i );
+      } // if
+      
+    } // for
+    
+    return null;
+  } // I_get_local()
+  
 } // class BindingTB
 
 class Binding {
@@ -182,6 +335,7 @@ class Binding {
   public boolean mIs_primitive;
   
   public Binding( String symbol, boolean isFunc ) {
+    // define a primitive
     
     mSymbol = symbol;
     mIs_primitive = true;
@@ -202,7 +356,17 @@ class Binding {
     
     int if_defined = Memory.Get_Instance().MemoryIndex( Sexp );
     if ( if_defined > -1 ) {
-      mMemoryIndex = if_defined;
+      //
+      MemoryItem tmp = Memory.Get_Instance().Get( if_defined );
+      if ( tmp.mIs_function && tmp.Get_Symbol().equals( "(lambda)" ) ) {
+        // if function is not directly define by user
+        // OurScheme will remove the mark of System define presentation
+        mMemoryIndex = Memory.Get_Instance().Add( ")(lambda", tmp.mFuncArgs, tmp.mFuncBodyNode );
+      } // if
+      else {
+        mMemoryIndex = if_defined;
+      } // else
+      
     } // if
     else {
       // create binding
@@ -211,7 +375,7 @@ class Binding {
     
   } // Binding()
   
-  public Binding( String symbol, Node functionArgs, Node Sexp ) {
+  public Binding( String symbol, Vector<Node> functionArgs, Vector<Node> Sexp ) {
     mSymbol = symbol;
     mIs_primitive = false;
     
@@ -219,12 +383,12 @@ class Binding {
     mMemoryIndex = Memory.Get_Instance().Add( symbol, functionArgs, Sexp );
   } // Binding()
   
-  public void Set( Node functionArgs, Node Sexp ) throws PrimitiveRedefineError {
+  public void Set( Vector<Node> functionArgs, Vector<Node> Sexp ) throws PrimitiveRedefineError {
     if ( mIs_primitive ) {
       throw new PrimitiveRedefineError();
     } // if
     else {
-      mMemoryIndex = Memory.Get_Instance().Add( "", functionArgs, Sexp );
+      mMemoryIndex = Memory.Get_Instance().Add( mSymbol, functionArgs, Sexp );
     } // else
     
   } // Set()
@@ -235,9 +399,28 @@ class Binding {
       throw new PrimitiveRedefineError();
     } // if
     else {
-      // create binding
-      mMemoryIndex = Memory.Get_Instance().Add( "", Sexp );
+      // create new memoryItem
+      // or
+      // point to an exit memoryItem
+      int if_defined = Memory.Get_Instance().MemoryIndex( Sexp );
+      if ( if_defined > -1 ) {
+        MemoryItem tmp = Memory.Get_Instance().Get( if_defined );
+        if ( tmp.mIs_function && tmp.Get_Symbol().equals( "(lambda)" ) ) {
+          // if function is not directly define by user
+          // OurScheme will remove the mark of System define presentation
+          mMemoryIndex = Memory.Get_Instance().Add( ")(lambda", tmp.mFuncArgs, tmp.mFuncBodyNode );
+        } // if
+        else {
+          mMemoryIndex = if_defined;
+        } // else
+        
+      } // if
+      else {
+        mMemoryIndex = Memory.Get_Instance().Add( "", Sexp );
+      } // else
+      
     } // else
+    
   } // Set()
   
   public Node Get() {
@@ -280,14 +463,25 @@ class Memory {
     return mMemoryItems.indexOf( item );
   } // Add()
   
-  public int Add( String symbol, Node functionArgs, Node Sexp ) {
+  public int Add( String symbol, Vector<Node> functionArgs, Vector<Node> Sexp ) {
     MemoryItem item = new MemoryItem( symbol, functionArgs, Sexp );
     mMemoryItems.add( item );
     return mMemoryItems.indexOf( item );
   } // Add()
   
+  public Node Add( MemoryItem item ) {
+    mMemoryItems.add( item );
+    return item;
+  } // Add()
+  
   public MemoryItem Get( int memory_Addr ) {
-    return mMemoryItems.elementAt( memory_Addr );
+    if ( memory_Addr < 0 || memory_Addr >= mMemoryItems.size() ) {
+      return null;
+    } // if
+    else {
+      return mMemoryItems.elementAt( memory_Addr );
+    } // else
+    
   } // Get()
   
   public int MemoryIndex( Node item ) {
@@ -305,8 +499,8 @@ class Memory {
 class MemoryItem extends Node {
   
   public String mSymbol;
-  public Node mFuncArgs;
-  public Node mFuncBodyNode;
+  public Vector<Node> mFuncArgs;
+  public Vector<Node> mFuncBodyNode;
   public Node mSexp;
   public boolean mIs_function;
   public boolean mIs_primitive;
@@ -335,11 +529,12 @@ class MemoryItem extends Node {
     mIs_primitive = false;
   } // MemoryItem()
   
-  public MemoryItem( String symbol, Node functionArgs, Node Sexp ) {
+  public MemoryItem( String symbol, Vector<Node> functionArgs, Vector<Node> Sexp ) {
     // a binding is a dot node
     super( new Token( symbol, Symbol.sBINDING ) );
     
     mFuncBodyNode = Sexp;
+    mFuncArgs = functionArgs;
     mSexp = new Node( new Token( symbol, Symbol.sPROCEDUREL ) );
     mSymbol = symbol;
     mIs_function = true;

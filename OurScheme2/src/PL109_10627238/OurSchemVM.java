@@ -6,16 +6,15 @@ public class OurSchemVM {
   private static OurSchemVM sOurSchemVM_S;
   private Node mNowExcutingSexpNode;
   private Node mFailedList;
+  private Node mVerbose;
   public CallStack mCallStack;
-  public Memory mMemory;
   
   public OurSchemVM() {
+    mVerbose = Function.Generate_True();
     
     // register inner Binding
     mCallStack = new CallStack();
     
-    //
-    mMemory = new Memory();
   } // OurSchemVM()
   
   public void Initial() {
@@ -32,6 +31,16 @@ public class OurSchemVM {
     } // else
     
   } // Get_Instance()
+  
+  public boolean Is_Verbose() {
+    if ( mVerbose.Is_T() ) {
+      return true;
+    } // if
+    else {
+      return true;
+    } // else
+    
+  } // Is_Verbose()
   
   public boolean Is_CallStackTopLevel() {
     return mCallStack.Is_TopLevel();
@@ -81,6 +90,7 @@ public class OurSchemVM {
       // if not atom
       // check if pure list
       if ( InnerFunction.Is_List( Sexp ).mToken.mType == Symbol.sT ) {
+        // if reserved words
         return CallFunction( Sexp );
       } // if
       else {
@@ -96,7 +106,7 @@ public class OurSchemVM {
   
   public Node CallFunction( Node Sexp ) throws Throwable {
     Node returnNode = null;
-    Node functionBind = Evaluate( Sexp.mL_Child );
+    Node functionBind = Evaluate( Sexp.mL_Child ).Get();
     
     String funcnName = functionBind.Get_Symbol();
     Node functionArgsSexp = Sexp.mR_Child;
@@ -334,15 +344,21 @@ public class OurSchemVM {
         mCallStack.Push();
         
         try {
-          Vector<Node> paremeters;
+          Vector<Node> paremeters = new Vector<Node>();
+          Vector<Node> excutinglist = new Vector<Node>();
           try {
-            paremeters = ParseParemeter( "define", 2, functionArgsSexp, false );
+            paremeters = ParseParemeter( "define", 2, functionArgsSexp, true );
           } // try
           catch ( EvaluatingError e ) {
             throw new MainSexpError( "DEFINE format" );
           } // catch
           
-          Node bindingValueNode = paremeters.elementAt( 1 );
+          for ( int i = 1 ; i < paremeters.size() ; i++ ) {
+            excutinglist.add( paremeters.elementAt( i ) );
+            
+          } // for
+          
+          Node bindingValueNode = InnerFunction.List( excutinglist );
           
           String bindTargetString = mCallStack.Set_Binding( paremeters.elementAt( 0 ), bindingValueNode );
           
@@ -357,6 +373,14 @@ public class OurSchemVM {
         } // catch
         
         mCallStack.Pop();
+        
+        if ( mVerbose.Is_T() ) {
+          // do nothing
+        } // if
+        else {
+          throw new VerboseException();
+        } // else
+        
       } // if
       else {
         throw new EvaluatingError( "level of DEFINE", "" );
@@ -738,12 +762,163 @@ public class OurSchemVM {
       } // else
       
     } // else if
+    else if ( funcnName.equals( "lambda" ) ) {
+      mCallStack.Push();
+      Vector<Node> paremeters;
+      Vector<Node> argumentList = new Vector<Node>();
+      Vector<Node> functionBody = new Vector<Node>();
+      
+      try {
+        paremeters = ParseParemeter( "lambda", 2, functionArgsSexp, true );
+        // check the parameter
+        if ( InnerFunction.Is_List( paremeters.elementAt( 0 ) ).Is_T() ) {
+          
+          // do set argument list
+          // cut parse parameters
+          argumentList = ParseParemeter( "", 0, paremeters.elementAt( 0 ), true );
+          for ( int i = 0 ; i < argumentList.size() ; i++ ) {
+            if ( InnerFunction.Is_symbol( argumentList.elementAt( i ) ).Is_T() ) {
+              // do nothing
+            } // if
+            else {
+              throw new Error( "lambda format" );
+            } // else
+          } // for
+          
+          // cut executable Sexp
+          for ( int i = 1 ; i < paremeters.size() ; i++ ) {
+            functionBody.add( paremeters.elementAt( i ) );
+          } // for
+          
+        } // if
+        else {
+          throw new Error( "lambda format" );
+        } // else
+      } // try
+      
+      catch ( Throwable e ) {
+        mFailedList = Sexp;
+        throw new EvaluatingError( "lambda format", "" );
+      } // catch
+      
+      // a function define by system internal workflow
+      // funcName is Enclosed in parentheses to separate it from the general
+      // function
+      returnNode = Memory.Get_Instance().Add( new MemoryItem( "(lambda)", argumentList, functionBody ) );
+      
+      mCallStack.Pop();
+    } // else if
+    else if ( funcnName.equals( "let" ) ) {
+      mCallStack.Push();
+      Vector<Node> parameter;
+      Vector<Node> executableSexp;
+      
+      try {
+        parameter = ParseParemeter( "let", 0, functionArgsSexp, true );
+        executableSexp = new Vector<Node>();
+        
+        if ( parameter.size() >= 2 && InnerFunction.Is_List( parameter.elementAt( 0 ) ).Is_T() ) {
+          Vector<Node> argumentPair = ParseParemeter( "", 0, parameter.elementAt( 0 ), true );
+          
+          // check all argument pair
+          for ( int i = 0 ; i < argumentPair.size() ; i++ ) {
+            if ( InnerFunction.Is_List( argumentPair.elementAt( i ) ).Is_T() ) {
+              Vector<Node> tmpPair = ParseParemeter( "", 0, argumentPair.elementAt( i ), true );
+              
+              if ( tmpPair.size() != 2 ) {
+                throw new FormatError( "LET format" );
+              } // if
+              
+              if ( InnerFunction.Is_symbol( tmpPair.elementAt( 0 ) ).Is_T() ) {
+                
+                // set local variable
+                mCallStack.Set_Binding_local( tmpPair.elementAt( 0 ), tmpPair.elementAt( 1 ) );
+                
+              } // if
+              else {
+                throw new FormatError( "LET format" );
+              } // else
+              
+            } // if
+            else {
+              throw new FormatError( "LET format" );
+            } // else
+            
+          } // for
+          
+          for ( int i = 1 ; i < parameter.size() ; i++ ) {
+            executableSexp.add( parameter.elementAt( i ) );
+          } // for
+          
+        } // if
+        else {
+          throw new FormatError( "LET format" );
+        } // else
+        
+      } // try
+      catch ( FormatError e ) {
+        mFailedList = Sexp;
+        throw new ListError( "LET format" );
+      } // catch
+      
+      for ( int i = 0 ; i < executableSexp.size() ; i++ ) {
+        returnNode = Evaluate( executableSexp.elementAt( i ) );
+      } // for
+      
+      mCallStack.Pop();
+    } // else if
+    else if ( funcnName.equals( "verbose?" ) ) {
+      mCallStack.Push();
+      // verbose
+      Vector<Node> parameter = ParseParemeter( "verbose?", 0, functionArgsSexp, false );
+      returnNode = mVerbose;
+      mCallStack.Pop();
+      
+    } // else if
+    else if ( funcnName.equals( "verbose" ) ) {
+      mCallStack.Push();
+      Vector<Node> parameter = ParseParemeter( "verbose", 1, functionArgsSexp, false );
+      if ( InnerFunction.Is__Boolean( parameter.elementAt( 0 ) ).Is_T() ) {
+        if ( parameter.elementAt( 0 ).Is_T() ) {
+          mVerbose = Function.Generate_True();
+        } // if
+        else {
+          mVerbose = Function.Generate_False();
+        } // else
+        
+        returnNode = mVerbose;
+        mCallStack.Pop();
+        
+      } // if
+      else {
+        throw new OperationError( "verbose" );
+      } // else
+      
+    } // else if
     else {
       // call custom binding function
       
       if ( functionBind.Get().mToken.mType == Symbol.sPROCEDUREL ) {
         //
         mCallStack.Push();
+        // get function memoryItem
+        MemoryItem fnc = Memory.Get_Instance().Get( Memory.Get_Instance().MemoryIndex( functionBind.Get() ) );
+        if ( fnc == null ) {
+          throw new EvaluatingError( "Warning", "Memory error" );
+        } // if
+        
+        int paramNum = fnc.mFuncArgs.size();
+        // parse argument
+        Vector<Node> arguments = ParseParemeter( fnc.Get_Symbol(), paramNum, functionArgsSexp, false );
+        // set local variable
+        for ( int i = 0 ; i < paramNum ; i++ ) {
+          mCallStack.Set_Binding_local( fnc.mFuncArgs.elementAt( i ), arguments.elementAt( i ) );
+        } // for
+        
+        // evaluate all executable Sexp
+        for ( int i = 0 ; i < fnc.mFuncBodyNode.size() ; i++ ) {
+          returnNode = Evaluate( fnc.mFuncBodyNode.elementAt( i ) );
+        } // for
         
         mCallStack.Pop();
       } // if
@@ -764,18 +939,12 @@ public class OurSchemVM {
     
   } // CallFunction()
   
-  private Node CustomFunctionCall( String functionName, Node Sexp ) {
-    // push a call stack object
-    
-    // allocate function arguments as local variable
-    
-    return null;
-  } // CustomFunctionCall()
-  
-  private Vector<Node> ParseParemeter( String fcName, int amount, Node PTree, boolean l ) throws Throwable {
+  public static Vector<Node> ParseParemeter( String fcName, int amount, Node PTree, boolean l )
+      throws Throwable {
     Vector<Node> paremeters = new Vector<Node>();
     
     while ( PTree != null && !PTree.Is_Nil() ) {
+      
       paremeters.add( PTree.mL_Child );
       // go down the bones
       PTree = PTree.mR_Child;
@@ -783,17 +952,36 @@ public class OurSchemVM {
     
     // check amount of arguments
     if ( l ) {
+      
       if ( paremeters.size() >= amount ) {
+        
         return paremeters;
       } // if
       else {
-        throw new EvaluatingError( "incorrect number of arguments", fcName );
+        if ( fcName.equals( "(lambda)" ) ) {
+          throw new IncorrectArgNumError( "lambda expression" );
+        } // if
+        else if ( fcName.equals( ")(lambda" ) ) {
+          throw new IncorrectArgNumError( "lambda" );
+        } // if
+        else {
+          throw new IncorrectArgNumError( fcName );
+        } // else
+        
       } // else
       
     } // if
     else {
       if ( paremeters.size() != amount ) {
-        throw new EvaluatingError( "incorrect number of arguments", fcName );
+        if ( fcName.equals( "(lambda)" ) ) {
+          throw new IncorrectArgNumError( "lambda" );
+        } // if
+        else if ( fcName.equals( ")(lambda" ) ) {
+          throw new IncorrectArgNumError( "lambda" );
+        } // if
+        else {
+          throw new IncorrectArgNumError( fcName );
+        } // else
       } // if
       else {
         return paremeters;
@@ -1142,6 +1330,11 @@ class CallStack {
     Set_Binding_inner( "begin", true );
     Set_Binding_inner( "clean-environment", true );
     Set_Binding_inner( "exit", true );
+    // project3
+    Set_Binding_inner( "lambda", true );
+    Set_Binding_inner( "let", true );
+    Set_Binding_inner( "verbose?", true );
+    Set_Binding_inner( "verbose", true );
   } // Init()
   
   public void Exception_Process() {
@@ -1175,6 +1368,11 @@ class CallStack {
     BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
     return tmp.Get( symbol );
   } // Get_Binding()
+  
+  public String Set_Binding_local( Node bindingTarget, Node Sexp ) throws Throwable {
+    BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
+    return tmp.Set_local( bindingTarget, Sexp );
+  } // Set_Binding_local()
   
   public String Set_Binding( Node bindingTarget, Node Sexp ) throws Throwable {
     BindingTB tmp = mStack.elementAt( 0 );

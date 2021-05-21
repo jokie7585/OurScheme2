@@ -39,6 +39,13 @@ public class Main {
           MyScanner.Get_Instance().FinishReset();
           System.out.print( "> " );
         } // catch
+        catch ( IncorrectArgNumError e ) {
+          System.out.println( e.Get_Msg() );
+          System.out.println( "" );
+          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
+          MyScanner.Get_Instance().FinishReset();
+          System.out.print( "> " );
+        } // catch
         catch ( ListError e ) {
           System.out.print( e.Get_Msg() );
           Interpreter.NewPrinter( OurSchemVM.Get_Instance().Get_FailedList() );
@@ -53,6 +60,11 @@ public class Main {
           System.out.println( "" );
           OurSchemVM.Get_Instance().mCallStack.Exception_Process();
           MyScanner.Get_Instance().FinishReset();
+          System.out.print( "> " );
+        } // catch
+        catch ( VerboseException e ) {
+          MyScanner.Get_Instance().FinishReset();
+          System.out.println( "" );
           System.out.print( "> " );
         } // catch
       } // while
