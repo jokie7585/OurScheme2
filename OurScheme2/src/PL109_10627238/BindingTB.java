@@ -232,6 +232,9 @@ public class BindingTB {
         
         // Set a atom symbol binding need to evaluate the bindingSexp
         Node bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp );
+        // System.out.println( "push in : " + targetSymbolString );
+        // Interpreter.NewPrinter( bindingValue );
+        // System.out.println( "end in : " + targetSymbolString );
         
         if ( target == null ) {
           // insert at current binding table
@@ -241,8 +244,6 @@ public class BindingTB {
           // update binding
           target.Set( bindingValue );
         } // else
-        
-        System.out.println( "on seting " );
         
         return targetSymbolString;
         

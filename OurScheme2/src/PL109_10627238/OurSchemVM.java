@@ -75,6 +75,10 @@ public class OurSchemVM {
           throw new EvaluatingError( "unbound symbol", Sexp.mToken.mContent );
         } // if
         else {
+          // System.out.println( "dereference : " + Sexp.mToken.mContent );
+          // System.out.println( "get binding : " + binding.Get().Get_Symbol() +
+          // " : " );
+          // Interpreter.NewPrinter( binding.Get() );
           return binding.Get();
         } // else
       } // if
@@ -812,6 +816,8 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> parameter;
       Vector<Node> executableSexp;
+      Vector<Node> argSymbol = new Vector<Node>();
+      Vector<Node> argValue = new Vector<Node>();
       
       try {
         parameter = ParseParemeter( "let", 0, functionArgsSexp, true );
@@ -831,8 +837,8 @@ public class OurSchemVM {
               
               if ( InnerFunction.Is_symbol( tmpPair.elementAt( 0 ) ).Is_T() ) {
                 
-                // set local variable
-                mCallStack.Set_Binding_local( tmpPair.elementAt( 0 ), tmpPair.elementAt( 1 ) );
+                argSymbol.add( tmpPair.elementAt( 0 ) );
+                argValue.add( tmpPair.elementAt( 1 ) );
                 
               } // if
               else {
@@ -860,6 +866,11 @@ public class OurSchemVM {
         mFailedList = Sexp;
         throw new ListError( "LET format" );
       } // catch
+      
+      // load local variable
+      for ( int i = 0 ; i < argSymbol.size() ; i++ ) {
+        mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ) );
+      } // for
       
       for ( int i = 0 ; i < executableSexp.size() ; i++ ) {
         returnNode = Evaluate( executableSexp.elementAt( i ) );
@@ -899,20 +910,34 @@ public class OurSchemVM {
       // call custom binding function
       
       if ( functionBind.Get().mToken.mType == Symbol.sPROCEDUREL ) {
-        //
-        mCallStack.Push();
+        
+        Vector<Node> argSymbol = new Vector<Node>();
+        Vector<Node> argValue = new Vector<Node>();
+        
         // get function memoryItem
-        MemoryItem fnc = Memory.Get_Instance().Get( Memory.Get_Instance().MemoryIndex( functionBind.Get() ) );
+        int addr = Memory.Get_Instance().MemoryIndex( functionBind.Get() );
+        MemoryItem fnc = Memory.Get_Instance().Get( addr );
         if ( fnc == null ) {
           throw new EvaluatingError( "Warning", "Memory error" );
         } // if
+        
+        // System.out.println( "run function : " +
+        // functionBind.Get().Get_Symbol() );
         
         int paramNum = fnc.mFuncArgs.size();
         // parse argument
         Vector<Node> arguments = ParseParemeter( fnc.Get_Symbol(), paramNum, functionArgsSexp, false );
         // set local variable
         for ( int i = 0 ; i < paramNum ; i++ ) {
-          mCallStack.Set_Binding_local( fnc.mFuncArgs.elementAt( i ), arguments.elementAt( i ) );
+          argSymbol.add( fnc.mFuncArgs.elementAt( i ) );
+          argValue.add( Evaluate( arguments.elementAt( i ) ) );
+          
+        } // for
+        
+        mCallStack.Push();
+        // load in local variable
+        for ( int i = 0 ; i < paramNum ; i++ ) {
+          mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ) );
         } // for
         
         // evaluate all executable Sexp

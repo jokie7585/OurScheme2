@@ -198,4 +198,4 @@ class VerboseException extends Exception {
     
   } // VerboseException()
   
-} // class
+} // class VerboseException
