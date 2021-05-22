@@ -720,6 +720,7 @@ class InnerFunction {
     if ( Is_Atom( Sexp ).mToken.mType == Symbol.sT ) {
       if ( Sexp.mToken.mType == Symbol.sSYMBOL ) {
         Sexp.mToken.mType = Symbol.sSYMBOL_LEXICAL;
+        Sexp.mToken.mContent = "))" + Sexp.mToken.mContent;
       } // if
     } // if
     else {
@@ -748,6 +749,7 @@ class InnerFunction {
       else {
         if ( Sexp.mToken.mType == Symbol.sSYMBOL ) {
           Sexp.mToken.mType = Symbol.sSYMBOL_LEXICAL;
+          Sexp.mToken.mContent = "))" + Sexp.mToken.mContent;
         } // if
       } // else
       

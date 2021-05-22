@@ -643,7 +643,7 @@ public class OurSchemVM {
           } // if
           else {
             mFailedList = Sexp;
-            throw new ListError( "no return value" );
+            throw new NoReturnValue();
           } // else
           
         } // else
@@ -670,7 +670,7 @@ public class OurSchemVM {
         } // for
         
       } // try
-      catch ( EvaluatingError e ) {
+      catch ( IncorrectArgNumError e ) {
         mFailedList = Sexp;
         throw new ListError( "COND format" );
       } // catch
@@ -683,7 +683,7 @@ public class OurSchemVM {
           try {
             executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
           } // try
-          catch ( EvaluatingError e ) {
+          catch ( IncorrectArgNumError e ) {
             mFailedList = Sexp;
             throw new ListError( "COND format" );
           } // catch
@@ -720,7 +720,7 @@ public class OurSchemVM {
             else {
               if ( returnNode == null ) {
                 mFailedList = Sexp;
-                throw new ListError( "no return value" );
+                throw new NoReturnValue();
               } // if
             } // else
           } // else
@@ -912,6 +912,7 @@ public class OurSchemVM {
     } // else if
     else {
       // call custom binding function
+      // System.out.println( "user-define : " + functionBind.Get_Symbol() );
       
       if ( functionBind.Get().mToken.mType == Symbol.sPROCEDUREL ) {
         mCallStack.Push();
@@ -949,18 +950,22 @@ public class OurSchemVM {
           mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ) );
         } // for
         
-        // evaluate all executable Sexp
-        for ( int i = 0 ; i < fnc.mFuncBodyNode.size() ; i++ ) {
-          // System.out.println( "Check exp value" );
-          // Interpreter.NewPrinter( Evaluate( new Node( new Token( "exp",
-          // Symbol.sSYMBOL ) ) ) );
-          // Interpreter.NewPrinter(
-          // InnerFunction.Is_List( Evaluate( new Node( new Token( "exp",
-          // Symbol.sSYMBOL ) ) ) ) );
-          returnNode = Evaluate( fnc.mFuncBodyNode.elementAt( i ) );
-          // System.out.println( "Check exp value(after)" );
-          
-        } // for
+        try {
+          for ( int i = 0 ; i < fnc.mFuncBodyNode.size() ; i++ ) {
+            // System.out.println( "Check exp value" );
+            // Interpreter.NewPrinter( Evaluate( new Node( new Token( "exp",
+            // Symbol.sSYMBOL ) ) ) );
+            // Interpreter.NewPrinter(
+            // InnerFunction.Is_List( Evaluate( new Node( new Token( "exp",
+            // Symbol.sSYMBOL ) ) ) ) );
+            returnNode = Evaluate( fnc.mFuncBodyNode.elementAt( i ) );
+            // System.out.println( "Check exp value(after)" );
+            
+          } // for
+        } catch ( NoReturnValue e ) {
+          mFailedList = Sexp;
+          throw new NoReturnValue();
+        } // catch
         
         mCallStack.Pop();
         // System.out.println( "end function : " +

@@ -226,9 +226,11 @@ public class Interpreter {
     else if ( token.mType == Symbol.sFLOAT ) {
       return String.format( "%.3f", Float.parseFloat( token.mContent ) );
     } // else if
-    else if ( token.mType == Symbol.sSYMBOL || token.mType == Symbol.sSTRING
-        || token.mType == Symbol.sSYMBOL_LEXICAL ) {
+    else if ( token.mType == Symbol.sSYMBOL || token.mType == Symbol.sSTRING ) {
       return token.mContent;
+    } // else if
+    else if ( token.mType == Symbol.sSYMBOL_LEXICAL ) {
+      return token.mContent.substring( 2 );
     } // else if
     else if ( token.mType == Symbol.sNIL ) {
       return "nil";
