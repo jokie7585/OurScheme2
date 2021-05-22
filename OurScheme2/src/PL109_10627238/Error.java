@@ -116,9 +116,9 @@ class UnboundError extends EvaluatingError {
   } // UnboundError()
 } // class UnboundError
 
-class ApplyNonFunction extends EvaluatingError {
-  public ApplyNonFunction( String symbol ) {
-    super( "attempt to apply non-function", symbol );
+class ApplyNonFunction extends ListError {
+  public ApplyNonFunction() {
+    super( "attempt to apply non-function" );
   } // ApplyNonFunction()
 } // class ApplyNonFunction
 
@@ -134,17 +134,25 @@ class NoReturnParame extends ListError {
   } // NoReturnParame()
 } // class NoReturnParame
 
+class UnboundCondition extends ListError {
+  public UnboundCondition() {
+    super( "unbound condition" );
+  } // UnboundCondition()
+} // class UnboundCondition
+
 class UnboundTestCondition extends ListError {
   public UnboundTestCondition() {
-    super( "unbound condition" );
+    super( "unbound test-condition" );
   } // UnboundTestCondition()
 } // class UnboundTestCondition
 
-class UnboundCondition extends ListError {
-  public UnboundCondition() {
-    super( "unbound test-condition" );
-  } // UnboundCondition()
-} // class UnboundCondition
+class EvaluateNonBinding extends ListError {
+  // PALProject3 the e type
+  public EvaluateNonBinding() {
+    super( "no return valuen" );
+  } // EvaluateNonBinding()
+  
+} // class EvaluateNonBinding
 
 class ListError extends Error {
   

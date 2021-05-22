@@ -19,6 +19,7 @@ public class Main {
           Interpreter.NewPrinter( sexpNode );
           
           MyScanner.Get_Instance().FinishReset();
+          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
           System.out.println( "" );
           System.out.print( "> " );
         } // tru
@@ -64,6 +65,7 @@ public class Main {
         } // catch
         catch ( VerboseException e ) {
           MyScanner.Get_Instance().FinishReset();
+          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
           System.out.println( "" );
           System.out.print( "> " );
         } // catch
