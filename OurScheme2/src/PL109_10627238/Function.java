@@ -66,7 +66,7 @@ class InnerFunction {
   public static Node Cdr( Node Sexp ) throws Throwable {
     if ( Is_Pair( Sexp ).Is_T() ) {
       if ( Sexp.Get().Get_R_C() == null ) {
-        return Function.Generate_False();
+        return new Node( new Token( "()", Symbol.sNIL ) );
       } // if
       else {
         return Sexp.Get().Get_R_C();
