@@ -692,7 +692,7 @@ public class OurSchemVM {
           if ( i < paremeters.size() - 1 ) {
             // if true
             if ( InnerFunction.And_Is_next( Evaluate( executSequence.elementAt( 0 ) ) ) ) {
-              System.out.println( "in" );
+              // System.out.println( "in" );
               for ( int j = 1 ; j < executSequence.size() ; j++ ) {
                 returnNode = Evaluate( executSequence.elementAt( j ) );
               } // for
@@ -914,6 +914,7 @@ public class OurSchemVM {
       // call custom binding function
       
       if ( functionBind.Get().mToken.mType == Symbol.sPROCEDUREL ) {
+        mCallStack.Push();
         
         Vector<Node> argSymbol = new Vector<Node>();
         Vector<Node> argValue = new Vector<Node>();
@@ -927,7 +928,7 @@ public class OurSchemVM {
         
         // System.out.println( "run function : " +
         // functionBind.Get().Get_Symbol() );
-        //
+        
         int paramNum = fnc.mFuncArgs.size();
         // parse argument
         Vector<Node> arguments = ParseParemeter( fnc.Get_Symbol(), paramNum, functionArgsSexp, false );
@@ -943,8 +944,6 @@ public class OurSchemVM {
           
         } // for
         
-        mCallStack.Push();
-        
         // load in local variable
         for ( int i = 0 ; i < paramNum ; i++ ) {
           mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ) );
@@ -952,10 +951,20 @@ public class OurSchemVM {
         
         // evaluate all executable Sexp
         for ( int i = 0 ; i < fnc.mFuncBodyNode.size() ; i++ ) {
+          // System.out.println( "Check exp value" );
+          // Interpreter.NewPrinter( Evaluate( new Node( new Token( "exp",
+          // Symbol.sSYMBOL ) ) ) );
+          // Interpreter.NewPrinter(
+          // InnerFunction.Is_List( Evaluate( new Node( new Token( "exp",
+          // Symbol.sSYMBOL ) ) ) ) );
           returnNode = Evaluate( fnc.mFuncBodyNode.elementAt( i ) );
+          // System.out.println( "Check exp value(after)" );
+          
         } // for
         
         mCallStack.Pop();
+        // System.out.println( "end function : " +
+        // functionBind.Get().Get_Symbol() );
       } // if
       else {
         mFailedList = Sexp;

@@ -96,12 +96,13 @@ class InnerFunction {
     
     // check
     if ( Sexp.mToken.mType == Symbol.sDOT ) {
+      
       // check last mR_Child is nil or null
-      while ( Sexp.mR_Child != null && Sexp.mR_Child.mToken.mType != Symbol.sNIL ) {
+      while ( Sexp != null ) {
         Sexp = Sexp.mR_Child;
       } // while
       
-      if ( Sexp.Is_Dot() ) {
+      if ( Sexp == null || Sexp.Is_Nil() ) {
         // if
         return Function.Generate_True();
       } // if
