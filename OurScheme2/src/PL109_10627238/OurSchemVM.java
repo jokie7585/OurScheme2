@@ -838,7 +838,7 @@ public class OurSchemVM {
               if ( InnerFunction.Is_symbol( tmpPair.elementAt( 0 ) ).Is_T() ) {
                 
                 argSymbol.add( tmpPair.elementAt( 0 ) );
-                argValue.add( tmpPair.elementAt( 1 ) );
+                argValue.add( Evaluate( tmpPair.elementAt( 1 ) ) );
                 
               } // if
               else {
