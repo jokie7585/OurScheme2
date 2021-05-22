@@ -983,15 +983,6 @@ public class OurSchemVM {
             } // else
           } // if
           else {
-            Node condition;
-            
-            try {
-              condition = Evaluate( executSequence.elementAt( 0 ) );
-            } // try
-            catch ( NoReturnValue e ) {
-              mFailedList = executSequence.elementAt( 0 );
-              throw new UnboundTestCondition();
-            } // catch
             
             // check if keyword
             // // else
@@ -1001,17 +992,30 @@ public class OurSchemVM {
                 returnNode = Evaluate( executSequence.elementAt( j ) );
               } // for
             } // if
-            else if ( InnerFunction.And_Is_next( condition ) ) {
-              for ( int j = 1 ; j < executSequence.size() ; j++ ) {
-                returnNode = Evaluate( executSequence.elementAt( j ) );
-              } // for
-            } // else if
             else {
+              Node condition;
               
-              if ( returnNode == null ) {
-                mFailedList = Sexp;
-                throw new NoReturnValue();
-              } // if
+              try {
+                condition = Evaluate( executSequence.elementAt( 0 ) );
+              } // try
+              catch ( NoReturnValue e ) {
+                mFailedList = executSequence.elementAt( 0 );
+                throw new UnboundTestCondition();
+              } // catch
+              
+              if ( InnerFunction.And_Is_next( condition ) ) {
+                for ( int j = 1 ; j < executSequence.size() ; j++ ) {
+                  returnNode = Evaluate( executSequence.elementAt( j ) );
+                } // for
+              } // else if
+              else {
+                
+                if ( returnNode == null ) {
+                  mFailedList = Sexp;
+                  throw new NoReturnValue();
+                } // if
+                
+              } // else
               
             } // else
             
