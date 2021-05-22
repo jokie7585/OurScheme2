@@ -231,7 +231,7 @@ public class BindingTB {
         Binding target = I_get_local( targetSymbolString );
         
         // Set a atom symbol binding need to evaluate the bindingSexp
-        Node bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp );
+        Node bindingValue = bindingSexp;
         // System.out.println( "push in : " + targetSymbolString );
         // Interpreter.NewPrinter( bindingValue );
         // System.out.println( "end in : " + targetSymbolString );

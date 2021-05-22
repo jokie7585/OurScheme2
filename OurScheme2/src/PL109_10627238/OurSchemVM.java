@@ -923,18 +923,24 @@ public class OurSchemVM {
         
         // System.out.println( "run function : " +
         // functionBind.Get().Get_Symbol() );
-        
+        //
         int paramNum = fnc.mFuncArgs.size();
         // parse argument
         Vector<Node> arguments = ParseParemeter( fnc.Get_Symbol(), paramNum, functionArgsSexp, false );
         // set local variable
         for ( int i = 0 ; i < paramNum ; i++ ) {
+          
           argSymbol.add( fnc.mFuncArgs.elementAt( i ) );
-          argValue.add( Evaluate( arguments.elementAt( i ) ) );
+          argValue.add( Evaluate( arguments.elementAt( i ).Get() ) );
+          
+          // System.out.println( "cut: " + argSymbol.elementAt( i ).Get_Symbol()
+          // );
+          // Interpreter.NewPrinter( argValue.elementAt( i ) );
           
         } // for
         
         mCallStack.Push();
+        
         // load in local variable
         for ( int i = 0 ; i < paramNum ; i++ ) {
           mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ) );
