@@ -91,18 +91,18 @@ class InnerFunction {
     } // else
   } // Is_Atom()
   
-  public static Node Is_List( Node Sexp ) {
+  public static Node Is_List( Node Sexp ) throws Throwable {
     Sexp = Sexp.Get();
-    
+    // Interpreter.NewPrinter( Sexp );
     // check
     if ( Sexp.mToken.mType == Symbol.sDOT ) {
       
       // check last mR_Child is nil or null
-      while ( Sexp != null ) {
+      while ( Sexp.mR_Child != null ) {
         Sexp = Sexp.mR_Child;
       } // while
       
-      if ( Sexp == null || Sexp.Is_Nil() ) {
+      if ( Sexp.Is_Dot() || Sexp.Is_Nil() || Sexp.mToken.mContent.equals( "()" ) ) {
         // if
         return Function.Generate_True();
       } // if
