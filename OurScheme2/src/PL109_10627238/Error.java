@@ -128,6 +128,24 @@ class NoReturnValue extends ListError {
   } // NoReturnValue()
 } // class NoReturnValue
 
+class NoReturnParame extends ListError {
+  public NoReturnParame() {
+    super( "unbound parameter" );
+  } // NoReturnParame()
+} // class NoReturnParame
+
+class UnboundTestCondition extends ListError {
+  public UnboundTestCondition() {
+    super( "unbound condition" );
+  } // UnboundTestCondition()
+} // class UnboundTestCondition
+
+class UnboundCondition extends ListError {
+  public UnboundCondition() {
+    super( "unbound test-condition" );
+  } // UnboundCondition()
+} // class UnboundCondition
+
 class ListError extends Error {
   
   public ListError( String type ) {
