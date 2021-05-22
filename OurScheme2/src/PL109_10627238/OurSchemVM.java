@@ -654,7 +654,6 @@ public class OurSchemVM {
     else if ( funcnName.equals( "cond" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters;
-      Vector<Node> executSequence = new Vector<Node>();
       
       try {
         paremeters = ParseParemeter( "cond", 1, functionArgsSexp, true );
@@ -666,7 +665,7 @@ public class OurSchemVM {
           else {
             // test all list has at least two symbol
             
-            executSequence.add( paremeters.elementAt( i ) );
+            Vector<Node> executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
           } // else
         } // for
         
@@ -676,44 +675,46 @@ public class OurSchemVM {
         throw new ListError( "COND format" );
       } // catch
       
-      for ( int i = 0 ; i < executSequence.size() ; i++ ) {
-        
-        if ( InnerFunction.Is_List( executSequence.elementAt( i ) ).Is_T() ) {
-          
-          Vector<Node> condtion;
+      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+        // check if List
+        if ( InnerFunction.Is_List( paremeters.elementAt( i ) ).Is_T() ) {
+          Vector<Node> executSequence;
           // get the executing sequence
           try {
-            condtion = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
+            executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
           } // try
           catch ( EvaluatingError e ) {
             mFailedList = Sexp;
             throw new ListError( "COND format" );
           } // catch
           
-          if ( i < condtion.size() - 1 ) {
+          // execute all
+          if ( i < paremeters.size() - 1 ) {
             // if true
-            if ( InnerFunction.And_Is_next( Evaluate( condtion.elementAt( 0 ) ) ) ) {
-              for ( int j = 1 ; j < condtion.size() ; j++ ) {
-                returnNode = Evaluate( condtion.elementAt( j ) );
+            if ( InnerFunction.And_Is_next( Evaluate( executSequence.elementAt( 0 ) ) ) ) {
+              System.out.println( "in" );
+              for ( int j = 1 ; j < executSequence.size() ; j++ ) {
+                returnNode = Evaluate( executSequence.elementAt( j ) );
               } // for
               
+              // skip all
+              i = paremeters.size();
             } // if
             else {
-              // skip all
-              i = condtion.size();
+              // do nothing
             } // else
           } // if
           else {
             // check if keyword
             // // else
-            if ( condtion.elementAt( 0 ).Get_Symbol().compareTo( "else" ) == 0 ) {
-              for ( int j = 1 ; j < condtion.size() ; j++ ) {
-                returnNode = Evaluate( condtion.elementAt( j ) );
+            if ( executSequence.elementAt( 0 ).Get_Symbol().compareTo( "else" ) == 0 ) {
+              for ( int j = 1 ; j < executSequence.size() ; j++ ) {
+                returnNode = Evaluate( executSequence.elementAt( j ) );
               } // for
             } // if
-            else if ( InnerFunction.And_Is_next( Evaluate( condtion.elementAt( 0 ) ) ) ) {
-              for ( int j = 1 ; j < condtion.size() ; j++ ) {
-                returnNode = Evaluate( condtion.elementAt( j ) );
+            else if ( InnerFunction.And_Is_next( Evaluate( executSequence.elementAt( 0 ) ) ) ) {
+              for ( int j = 1 ; j < executSequence.size() ; j++ ) {
+                returnNode = Evaluate( executSequence.elementAt( j ) );
               } // for
             } // else if
             else {
