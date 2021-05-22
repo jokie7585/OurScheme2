@@ -125,7 +125,7 @@ class ApplyNonFunction extends EvaluatingError {
 class NoReturnValue extends ListError {
   public NoReturnValue() {
     super( "no return value" );
-  }
+  } // NoReturnValue()
 } // class NoReturnValue
 
 class ListError extends Error {

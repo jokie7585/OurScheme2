@@ -110,7 +110,16 @@ public class OurSchemVM {
   
   public Node CallFunction( Node Sexp ) throws Throwable {
     Node returnNode = null;
-    Node functionBind = Evaluate( Sexp.mL_Child ).Get();
+    
+    Node functionBind;
+    
+    try {
+      functionBind = Evaluate( Sexp.mL_Child ).Get();
+    } // try
+    catch ( NoReturnValue e ) {
+      mFailedList = Sexp.mL_Child;
+      throw new NoReturnValue();
+    } // catch
     
     String funcnName = functionBind.Get_Symbol();
     Node functionArgsSexp = Sexp.mR_Child;
@@ -120,70 +129,151 @@ public class OurSchemVM {
     if ( funcnName.equals( "atom?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "atom?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is_Atom( arg1 );
       mCallStack.Pop();
     } // if
     else if ( funcnName.equals( "pair?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "pair?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is_Pair( arg1 );
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "list?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "list?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is_List( arg1 );
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "null?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "null?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is_Null( arg1 );
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "integer?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "integer?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is_Integer( arg1 );
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "real?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "real?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is_Real( arg1 );
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "number?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "number?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is_Number( arg1 );
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "string?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "string?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is_String( arg1 );
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "boolean?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "boolean?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is__Boolean( arg1 );
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "symbol?" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "symbol?", 1, functionArgsSexp, false );
-      Node arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      Node arg1;
+      try {
+        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = paremeters.elementAt( 0 );
+        throw new NoReturnValue();
+      } // catch
+      
       returnNode = InnerFunction.Is_symbol( arg1 );
       mCallStack.Pop();
     } // else if
@@ -191,10 +281,18 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "+", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -210,10 +308,17 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "-", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -229,10 +334,17 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "*", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -248,10 +360,17 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "/", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -325,10 +444,17 @@ public class OurSchemVM {
       
       Vector<Node> paremeters = ParseParemeter( "list", 0, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       returnNode = InnerFunction.List( evaluatedPram );
       
@@ -417,10 +543,17 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( ">", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
       
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -438,10 +571,17 @@ public class OurSchemVM {
       
       Vector<Node> paremeters = ParseParemeter( ">=", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -459,10 +599,17 @@ public class OurSchemVM {
       
       Vector<Node> paremeters = ParseParemeter( "<", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -480,10 +627,17 @@ public class OurSchemVM {
       
       Vector<Node> paremeters = ParseParemeter( "<=", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -501,10 +655,17 @@ public class OurSchemVM {
       
       Vector<Node> paremeters = ParseParemeter( "=", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_Number( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -521,10 +682,17 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "string-append", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -541,10 +709,17 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "string>?", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -560,10 +735,17 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "string<?", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -579,10 +761,17 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "string=?", 2, functionArgsSexp, true );
       Vector<Node> evaluatedPram = new Vector<Node>();
-      for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
-        
-      } // for
+      try {
+        for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // pre set as mFailedList
+          mFailedList = paremeters.elementAt( i );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          
+        } // for
+      } // try
+      catch ( NoReturnValue e ) {
+        throw new NoReturnValue();
+      } // catch
       
       for ( int i = 0 ; i < evaluatedPram.size() ; i++ ) {
         if ( InnerFunction.Is_String( evaluatedPram.elementAt( i ).Get() ).Is_Nil() ) {
@@ -980,7 +1169,8 @@ public class OurSchemVM {
     } // else
     
     if ( returnNode == null ) {
-      throw new EvaluatingError( "Warning", "not process all evaluate exception or try to evaluate null" );
+      mFailedList = Sexp;
+      throw new NoReturnValue();
     } // if
     else {
       return returnNode;
