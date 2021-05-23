@@ -7,14 +7,21 @@ public class OurSchemVM {
   private Node mNowExcutingSexpNode;
   private Node mFailedList;
   private Node mVerbose;
+  // it represent the control on a function
+  // or Os
+  // // when mScope is the first BindingTale
+  public BindingTB mScope_Global;
+  public BindingTB mScope_Cur;
   public CallStack mCallStack;
   
   public OurSchemVM() {
     mVerbose = Function.Generate_True();
     
+    Memory.Get_Instance().Init();
     // register inner Binding
     mCallStack = new CallStack();
-    
+    mScope_Global = mCallStack.top();
+    mScope_Cur = mScope_Global;
   } // OurSchemVM()
   
   public void Initial() {
@@ -60,17 +67,24 @@ public class OurSchemVM {
   
   public Node Apply( Node Sexp ) throws Throwable {
     mNowExcutingSexpNode = Sexp;
-    return Evaluate( Sexp );
+    return Evaluate( Sexp, mScope_Global );
   } // Apply()
   
-  public Node Evaluate( Node Sexp ) throws Throwable {
+  public Node Evaluate( Node Sexp, BindingTB scope ) throws Throwable {
     // if atom
     if ( InnerFunction.Is_Atom( Sexp ).mToken.mType == Symbol.sT ) {
       
       if ( Sexp.mToken.mType == Symbol.sSYMBOL ) {
         // if symbol
         
-        Binding binding = mCallStack.Get_Binding( Sexp.mToken.mContent );
+        Binding binding;
+        if ( Sexp.mScope != null ) {
+          binding = mCallStack.Get_Binding( Sexp.mToken.mContent, Sexp.mScope );
+        } // if
+        else {
+          binding = mCallStack.Get_Binding( Sexp.mToken.mContent, scope );
+        } // else
+        
         if ( binding == null ) {
           throw new EvaluatingError( "unbound symbol", Sexp.mToken.mContent );
         } // if
@@ -95,7 +109,7 @@ public class OurSchemVM {
       // check if pure list
       if ( InnerFunction.Is_List( Sexp ).mToken.mType == Symbol.sT ) {
         // if reserved words
-        return CallFunction( Sexp );
+        return CallFunction( Sexp, scope );
       } // if
       else {
         // TODO if non-list throw original List or Current List
@@ -108,13 +122,13 @@ public class OurSchemVM {
     
   } // Evaluate()
   
-  public Node CallFunction( Node Sexp ) throws Throwable {
+  public Node CallFunction( Node Sexp, BindingTB scope ) throws Throwable {
     Node returnNode = null;
     
     Node functionBind;
     
     try {
-      functionBind = Evaluate( Sexp.mL_Child ).Get();
+      functionBind = Evaluate( Sexp.mL_Child, scope ).Get();
     } // try
     catch ( NoReturnValue e ) {
       mFailedList = Sexp.mL_Child;
@@ -132,7 +146,7 @@ public class OurSchemVM {
       Node arg1;
       
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -148,7 +162,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "pair?", 1, functionArgsSexp, false );
       Node arg1;
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -164,7 +178,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "list?", 1, functionArgsSexp, false );
       Node arg1;
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -180,7 +194,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "null?", 1, functionArgsSexp, false );
       Node arg1;
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -196,7 +210,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "integer?", 1, functionArgsSexp, false );
       Node arg1;
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -212,7 +226,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "real?", 1, functionArgsSexp, false );
       Node arg1;
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -228,7 +242,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "number?", 1, functionArgsSexp, false );
       Node arg1;
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -244,7 +258,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "string?", 1, functionArgsSexp, false );
       Node arg1;
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -260,7 +274,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "boolean?", 1, functionArgsSexp, false );
       Node arg1;
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -276,7 +290,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "symbol?", 1, functionArgsSexp, false );
       Node arg1;
       try {
-        arg1 = Evaluate( paremeters.elementAt( 0 ) );
+        arg1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mCallStack.Pop();
@@ -296,7 +310,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -324,7 +338,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -352,7 +366,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -380,7 +394,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -403,7 +417,7 @@ public class OurSchemVM {
     else if ( funcnName.equals( "not" ) ) {
       mCallStack.Push();
       Vector<Node> paremeters = ParseParemeter( "not", 1, functionArgsSexp, false );
-      Node evaluatedNode = Evaluate( paremeters.elementAt( 0 ) );
+      Node evaluatedNode = Evaluate( paremeters.elementAt( 0 ), scope );
       
       returnNode = InnerFunction.Not( evaluatedNode );
       
@@ -416,7 +430,7 @@ public class OurSchemVM {
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         
         try {
-          returnNode = Evaluate( paremeters.elementAt( i ) );
+          returnNode = Evaluate( paremeters.elementAt( i ), scope );
           
           if ( InnerFunction.And_Is_next( returnNode ) ) {
             // do nothing
@@ -444,7 +458,7 @@ public class OurSchemVM {
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         
         try {
-          returnNode = Evaluate( paremeters.elementAt( i ) );
+          returnNode = Evaluate( paremeters.elementAt( i ), scope );
           
           if ( InnerFunction.Or_Is_next( returnNode ) ) {
             // do nothing
@@ -476,7 +490,7 @@ public class OurSchemVM {
       Node leftNode;
       Node rightNode;
       try {
-        leftNode = Evaluate( paremeters.elementAt( 0 ) );
+        leftNode = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 0 );
@@ -485,7 +499,7 @@ public class OurSchemVM {
       } // catch
       
       try {
-        rightNode = Evaluate( paremeters.elementAt( 1 ) );
+        rightNode = Evaluate( paremeters.elementAt( 1 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 1 );
@@ -505,7 +519,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -585,7 +599,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "car", 1, functionArgsSexp, false );
       Node param1;
       try {
-        param1 = Evaluate( paremeters.elementAt( 0 ) ).Get();
+        param1 = Evaluate( paremeters.elementAt( 0 ), scope ).Get();
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 0 );
@@ -605,7 +619,7 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "cdr", 1, functionArgsSexp, false );
       Node param1;
       try {
-        param1 = Evaluate( paremeters.elementAt( 0 ) ).Get();
+        param1 = Evaluate( paremeters.elementAt( 0 ), scope ).Get();
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 0 );
@@ -627,7 +641,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -657,7 +671,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -687,7 +701,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -717,7 +731,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -747,7 +761,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -776,7 +790,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -805,7 +819,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -833,7 +847,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -861,7 +875,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           // pre set as mFailedList
           mFailedList = paremeters.elementAt( i );
-          evaluatedPram.add( Evaluate( paremeters.elementAt( i ) ) );
+          evaluatedPram.add( Evaluate( paremeters.elementAt( i ), scope ) );
           
         } // for
       } // try
@@ -888,7 +902,7 @@ public class OurSchemVM {
       Node param2;
       
       try {
-        param1 = Evaluate( paremeters.elementAt( 0 ) );
+        param1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 0 );
@@ -897,7 +911,7 @@ public class OurSchemVM {
       } // catch
       
       try {
-        param2 = Evaluate( paremeters.elementAt( 1 ) );
+        param2 = Evaluate( paremeters.elementAt( 1 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 1 );
@@ -921,7 +935,7 @@ public class OurSchemVM {
       Node param2;
       
       try {
-        param1 = Evaluate( paremeters.elementAt( 0 ) );
+        param1 = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 0 );
@@ -930,7 +944,7 @@ public class OurSchemVM {
       } // catch
       
       try {
-        param2 = Evaluate( paremeters.elementAt( 1 ) );
+        param2 = Evaluate( paremeters.elementAt( 1 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 1 );
@@ -960,7 +974,7 @@ public class OurSchemVM {
         Node condition;
         
         try {
-          condition = Evaluate( parems.elementAt( 0 ) );
+          condition = Evaluate( parems.elementAt( 0 ), scope );
         } // try
         catch ( NoReturnValue e ) {
           mFailedList = parems.elementAt( 0 );
@@ -969,11 +983,11 @@ public class OurSchemVM {
         } // catch
         
         if ( InnerFunction.And_Is_next( condition ) ) {
-          returnNode = Evaluate( parems.elementAt( 1 ) );
+          returnNode = Evaluate( parems.elementAt( 1 ), scope );
         } // if
         else {
           if ( parems.size() == 3 ) {
-            returnNode = Evaluate( parems.elementAt( 2 ) );
+            returnNode = Evaluate( parems.elementAt( 2 ), scope );
           } // if
           else {
             mFailedList = Sexp;
@@ -1032,7 +1046,7 @@ public class OurSchemVM {
             Node condition;
             
             try {
-              condition = Evaluate( executSequence.elementAt( 0 ) );
+              condition = Evaluate( executSequence.elementAt( 0 ), scope );
             } // try
             catch ( NoReturnValue e ) {
               mFailedList = executSequence.elementAt( 0 );
@@ -1044,11 +1058,12 @@ public class OurSchemVM {
               // System.out.println( "in" );
               for ( int j = 1 ; j < executSequence.size() ; j++ ) {
                 try {
-                  returnNode = Evaluate( executSequence.elementAt( j ) );
+                  returnNode = Evaluate( executSequence.elementAt( j ), scope );
+                  
                 } // try
                 catch ( NoReturnValue e ) {
                   if ( j < executSequence.size() - 1 ) {
-                    // do nothing
+                    returnNode = null;
                   } // if
                   else {
                     mFailedList = executSequence.elementAt( j );
@@ -1075,11 +1090,11 @@ public class OurSchemVM {
             if ( executSequence.elementAt( 0 ).Get_Symbol().compareTo( "else" ) == 0 ) {
               for ( int j = 1 ; j < executSequence.size() ; j++ ) {
                 try {
-                  returnNode = Evaluate( executSequence.elementAt( j ) );
+                  returnNode = Evaluate( executSequence.elementAt( j ), scope );
                 } // try
                 catch ( NoReturnValue e ) {
                   if ( j < executSequence.size() - 1 ) {
-                    // do nothing
+                    returnNode = null;
                   } // if
                   else {
                     mFailedList = executSequence.elementAt( j );
@@ -1096,7 +1111,7 @@ public class OurSchemVM {
               Node condition;
               
               try {
-                condition = Evaluate( executSequence.elementAt( 0 ) );
+                condition = Evaluate( executSequence.elementAt( 0 ), scope );
               } // try
               catch ( NoReturnValue e ) {
                 mFailedList = executSequence.elementAt( 0 );
@@ -1107,11 +1122,11 @@ public class OurSchemVM {
               if ( InnerFunction.And_Is_next( condition ) ) {
                 for ( int j = 1 ; j < executSequence.size() ; j++ ) {
                   try {
-                    returnNode = Evaluate( executSequence.elementAt( j ) );
+                    returnNode = Evaluate( executSequence.elementAt( j ), scope );
                   } // try
                   catch ( NoReturnValue e ) {
                     if ( j < executSequence.size() - 1 ) {
-                      // do nothing
+                      returnNode = null;
                     } // if
                     else {
                       mFailedList = executSequence.elementAt( j );
@@ -1123,7 +1138,7 @@ public class OurSchemVM {
                   
                 } // for
                 
-              } // else if
+              } // if
               else {
                 
                 if ( returnNode == null ) {
@@ -1154,11 +1169,11 @@ public class OurSchemVM {
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         
         try {
-          returnNode = Evaluate( paremeters.elementAt( i ) );
+          returnNode = Evaluate( paremeters.elementAt( i ), scope );
         } // try
         catch ( NoReturnValue e ) {
           if ( i < paremeters.size() - 1 ) {
-            // do nothing
+            returnNode = null;
           } // if
           else {
             mFailedList = paremeters.elementAt( i );
@@ -1176,8 +1191,9 @@ public class OurSchemVM {
       // no need to push a new call stack
       
       if ( mCallStack.Is_TopLevel() ) {
-        mCallStack.Init();
         ParseParemeter( "clean-environment", 0, functionArgsSexp, false );
+        Initial();
+        // mCallStack.ListCurrentLayer();
         returnNode = Node.Generate_String( "environment cleaned" );
       } // if
       else {
@@ -1208,7 +1224,7 @@ public class OurSchemVM {
       Vector<Node> functionBody = new Vector<Node>();
       
       try {
-        paremeters = ParseParemeter( "lambda", 2, functionArgsSexp, true );
+        paremeters = ParseParemeter( "LAMBDA", 2, functionArgsSexp, true );
         // check the parameter
         if ( InnerFunction.Is_List( paremeters.elementAt( 0 ) ).Is_T() ) {
           
@@ -1220,8 +1236,7 @@ public class OurSchemVM {
               // do nothing
             } // if
             else {
-              mCallStack.Pop();
-              throw new Error( "lambda format" );
+              throw new FormatError( "LAMBDA format" );
             } // else
           } // for
           
@@ -1232,15 +1247,13 @@ public class OurSchemVM {
           
         } // if
         else {
-          mCallStack.Pop();
-          throw new Error( "lambda format" );
+          throw new FormatError( "LAMBDA format" );
         } // else
       } // try
-      
       catch ( Throwable e ) {
         mFailedList = Sexp;
         mCallStack.Pop();
-        throw new EvaluatingError( "lambda format", "" );
+        throw new FormatError( "LAMBDA format" );
       } // catch
       
       // a function define by system internal workflow
@@ -1319,7 +1332,8 @@ public class OurSchemVM {
         // // // or need be catch by user define function
         for ( int i = 0 ; i < argSymbol.size() ; i++ ) {
           mFailedList = argValue.elementAt( i );
-          mCallStack.Set_Binding_local( argSymbol.elementAt( i ), Evaluate( argValue.elementAt( i ) ) );
+          mCallStack.Set_Binding_local( argSymbol.elementAt( i ), Evaluate( argValue.elementAt( i ), scope ),
+              false );
         } // for
       } // try
       catch ( NoReturnValue e ) {
@@ -1327,7 +1341,7 @@ public class OurSchemVM {
       } // catch
       
       for ( int i = 0 ; i < executableSexp.size() ; i++ ) {
-        returnNode = Evaluate( executableSexp.elementAt( i ) );
+        returnNode = Evaluate( executableSexp.elementAt( i ), scope );
       } // for
       
       mCallStack.Pop();
@@ -1368,7 +1382,8 @@ public class OurSchemVM {
       if ( functionBind.Get().mToken.mType == Symbol.sPROCEDUREL ) {
         // mCallStack.ListCurrentLayer();
         
-        mCallStack.Push();
+        BindingTB cur = mCallStack.Push( scope );
+        
         // System.out.println( "run function : " +
         // functionBind.Get().Get_Symbol() );
         
@@ -1393,11 +1408,12 @@ public class OurSchemVM {
             mFailedList = arguments.elementAt( i );
             // do
             argSymbol.add( fnc.mFuncArgs.elementAt( i ) );
-            argValue.add( Evaluate( arguments.elementAt( i ).Get() ) );
             
             // System.out.println( "cut: " + argSymbol.elementAt( i
             // ).Get_Symbol() );
-            // System.out.print( " value: " );
+            
+            argValue.add( Evaluate( arguments.elementAt( i ).Get(), scope ) );
+            
             // Interpreter.NewPrinter( argValue.elementAt( i ) );
             
           } // for
@@ -1410,20 +1426,24 @@ public class OurSchemVM {
         
         // load in local variable
         for ( int i = 0 ; i < paramNum ; i++ ) {
-          mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ) );
+          mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ), true );
         } // for
         
+        // mCallStack.ListLayer( cur );
+        
+        // flattened the function body to avoid it works like
+        // nested call
         for ( int i = 0 ; i < fnc.mFuncBodyNode.size() ; i++ ) {
           
           try {
-            returnNode = Evaluate( fnc.mFuncBodyNode.elementAt( i ) );
+            Scope_Bind( fnc.mFuncBodyNode.elementAt( i ), cur );
+            returnNode = Evaluate( fnc.mFuncBodyNode.elementAt( i ), cur );
+            Scope_DeBind( fnc.mFuncBodyNode.elementAt( i ) );
           } // try
           catch ( NoReturnValue e ) {
-            if ( i == fnc.mFuncBodyNode.size() - 1 ) {
-              mFailedList = Sexp;
-              mCallStack.Pop();
-              throw new NoReturnValue();
-            } // if
+            mFailedList = Sexp;
+            mCallStack.Pop();
+            throw new NoReturnValue();
             
           } // catch
           
@@ -1432,6 +1452,7 @@ public class OurSchemVM {
         mCallStack.Pop();
         // System.out.println( "function return : " +
         // functionBind.Get().Get_Symbol() );
+        // mCallStack.ListLayer( mCallStack.top() );
       } // if
       else {
         mFailedList = Sexp;
@@ -1450,6 +1471,40 @@ public class OurSchemVM {
     } // else
     
   } // CallFunction()
+  
+  private void Scope_Bind( Node Sexp, BindingTB Scope ) {
+    if ( Sexp != null ) {
+      
+      if ( Sexp.Is_Dot() ) {
+        
+        Scope_Bind( Sexp.mL_Child, Scope );
+        Scope_Bind( Sexp.mR_Child, Scope );
+        
+      } // if
+      else {
+        Sexp.mScope = Scope;
+        
+      } // else
+      
+    } // if
+  } // Scope_Bind()
+  
+  private void Scope_DeBind( Node Sexp ) {
+    if ( Sexp != null ) {
+      
+      if ( Sexp.Is_Dot() ) {
+        
+        Scope_DeBind( Sexp.mL_Child );
+        Scope_DeBind( Sexp.mR_Child );
+        
+      } // if
+      else {
+        Sexp.mScope = null;
+        
+      } // else
+      
+    } // if
+  } // Scope_DeBind()
   
   public static Vector<Node> ParseParemeter( String fcName, int amount, Node PTree, boolean l )
       throws Throwable {
@@ -1856,23 +1911,33 @@ class CallStack {
     
   } // Exception_Process()
   
-  public void Push() {
+  public BindingTB Push() {
     // push a stack
     mStack.add( new BindingTB( mStack.elementAt( mStack.size() - 1 ) ) );
-    
+    return top();
+  } // Push()
+  
+  public BindingTB Push( BindingTB parant ) {
+    // push a stack
+    mStack.add( new BindingTB( parant ) );
+    return top();
   } // Push()
   
   public void Pop() {
     // pop a stack
     
-    if ( mStack.size() > 1 ) {
-      mStack.removeElementAt( mStack.size() - 1 );
-    } // if
+    // if ( mStack.size() > 1 ) {
+    // mStack.removeElementAt( mStack.size() - 1 );
+    // } // if
     
     // TODO callStack UnSafe Mode
-    // mStack.removeElementAt( mStack.size() - 1 );
+    mStack.removeElementAt( mStack.size() - 1 );
     
   } // Pop()
+  
+  public BindingTB top() {
+    return mStack.elementAt( mStack.size() - 1 );
+  } // top()
   
   public boolean Is_TopLevel() {
     if ( mStack.size() > 1 ) {
@@ -1882,24 +1947,35 @@ class CallStack {
     return true;
   } // Is_TopLevel()
   
-  public void ListCurrentLayer() throws Throwable {
-    Vector<Binding> tmp = mStack.elementAt( mStack.size() - 1 ).mBindings;
-    System.out.println( "List Binding" );
+  public void ListLayer( BindingTB bt ) throws Throwable {
+    
+    Vector<Binding> tmp = bt.mBindings;
+    System.out.println( "\nList Binding IsArgument" );
     System.out.println( "symbol  value" );
     for ( int i = 0 ; i < tmp.size() ; i++ ) {
-      System.out.println( tmp.elementAt( i ).mSymbol + "\t" + tmp.elementAt( i ).Get() );
+      System.out.println( tmp.elementAt( i ).mSymbol + "\t" + tmp.elementAt( i ).Get() + "\t"
+          + tmp.elementAt( i ).mIs_FunctionArgument );
       Interpreter.NewPrinter( tmp.elementAt( i ).Get().Get() );
     } // for
+    
+    System.out.println( "\n" );
   } // ListCurrentLayer()
   
-  public Binding Get_Binding( String symbol ) throws Throwable {
-    BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
-    return tmp.Get( symbol );
+  public Binding Get_Binding( String symbol, BindingTB scope ) throws Throwable {
+    
+    if ( scope != null ) {
+      return scope.Get( symbol );
+    } // if
+    else {
+      BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
+      return tmp.Get( symbol );
+    } // else
+    
   } // Get_Binding()
   
-  public String Set_Binding_local( Node bindingTarget, Node Sexp ) throws Throwable {
+  public String Set_Binding_local( Node bindingTarget, Node Sexp, boolean isFuncArgs ) throws Throwable {
     BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
-    return tmp.Set_local( bindingTarget, Sexp );
+    return tmp.Set_local( bindingTarget, Sexp, isFuncArgs );
   } // Set_Binding_local()
   
   public String Set_Binding( Node bindingTarget, Node Sexp ) throws Throwable {

@@ -149,7 +149,7 @@ class UnboundTestCondition extends ListError {
 class EvaluateNonBinding extends ListError {
   // PALProject3 the e type
   public EvaluateNonBinding() {
-    super( "no return valuen" );
+    super( "no return value" );
   } // EvaluateNonBinding()
   
 } // class EvaluateNonBinding

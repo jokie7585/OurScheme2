@@ -69,13 +69,15 @@ public class BindingTB {
       
       // process project 3 special case
       // // define function binding with special lambda syntax
-      Node func = OurSchemVM.Get_Instance().Evaluate( InnerFunction.Car( functionBody.elementAt( 0 ) ) );
+      BindingTB scope = OurSchemVM.Get_Instance().mScope_Global;
+      Node func = OurSchemVM.Get_Instance().Evaluate( InnerFunction.Car( functionBody.elementAt( 0 ) ),
+          scope );
       
       if ( functionBody.size() == 1 && func.Get_Symbol().equals( "(lambda)" ) ) {
         Binding target = I_get( targetSymbolString );
         if ( target == null ) {
           // insert at current binding table
-          mBindings.add( new Binding( targetSymbolString, func ) );
+          mBindings.add( new Binding( targetSymbolString, func, false ) );
         } // if
         else {
           // update binding
@@ -120,11 +122,12 @@ public class BindingTB {
         Binding target = I_get( targetSymbolString );
         
         // Set a atom symbol binding need to evaluate the bindingSexp
-        Node bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child );
+        BindingTB scope = OurSchemVM.Get_Instance().mScope_Global;
+        Node bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child, scope );
         
         if ( target == null ) {
           // insert at current binding table
-          mBindings.add( new Binding( targetSymbolString, bindingValue ) );
+          mBindings.add( new Binding( targetSymbolString, bindingValue, false ) );
         } // if
         else {
           // update binding
@@ -144,7 +147,7 @@ public class BindingTB {
     
   } // Set()
   
-  public String Set_local( Node bindingTarget, Node bindingSexp ) throws Throwable {
+  public String Set_local( Node bindingTarget, Node bindingSexp, boolean isFunctionargs ) throws Throwable {
     String targetSymbolString = "";
     
     // check if function or symbol bind
@@ -238,7 +241,7 @@ public class BindingTB {
         
         if ( target == null ) {
           // insert at current binding table
-          mBindings.add( new Binding( targetSymbolString, bindingValue ) );
+          mBindings.add( new Binding( targetSymbolString, bindingValue, isFunctionargs ) );
         } // if
         else {
           // update binding
@@ -267,19 +270,26 @@ public class BindingTB {
       
     } // for
     
-    BindingTB preTb = mPreTable;
-    
-    while ( preTb != null ) {
-      for ( int i = 0 ; i < preTb.mBindings.size() ; i++ ) {
-        if ( preTb.mBindings.elementAt( i ).mSymbol.equals( symbol ) ) {
-          return preTb.mBindings.elementAt( i );
-        } // if
-        
-      } // for
-      //
-      preTb = preTb.mPreTable;
+    if ( mPreTable != null ) {
       
-    } // while
+      BindingTB preTb = mPreTable;
+      
+      while ( preTb != null ) {
+        for ( int i = 0 ; i < preTb.mBindings.size() ; i++ ) {
+          if ( preTb.mBindings.elementAt( i ).mSymbol.equals( symbol ) ) {
+            
+            if ( !preTb.mBindings.elementAt( i ).mIs_FunctionArgument ) {
+              return preTb.mBindings.elementAt( i );
+            } // if
+            
+          } // if
+          
+        } // for
+        //
+        preTb = preTb.mPreTable;
+        
+      } // while
+    } // if
     
     return null;
   } // Get()
@@ -334,6 +344,8 @@ class Binding {
   public String mSymbol;
   public int mMemoryIndex;
   public boolean mIs_primitive;
+  // a function argument cannot be access from other scope
+  public boolean mIs_FunctionArgument;
   
   public Binding( String symbol, boolean isFunc ) {
     // define a primitive
@@ -349,11 +361,14 @@ class Binding {
       mMemoryIndex = Memory.Get_Instance().Add( symbol, isFunc );
     } // else
     
+    // special process on primitive
+    mIs_FunctionArgument = false;
   } // Binding()
   
-  public Binding( String symbol, Node Sexp ) {
+  public Binding( String symbol, Node Sexp, boolean fuctionArg ) {
     mSymbol = symbol;
     mIs_primitive = false;
+    mIs_FunctionArgument = fuctionArg;
     
     int if_defined = Memory.Get_Instance().MemoryIndex( Sexp );
     if ( if_defined > -1 ) {
@@ -382,6 +397,9 @@ class Binding {
     
     // create binding
     mMemoryIndex = Memory.Get_Instance().Add( symbol, functionArgs, Sexp );
+    
+    // function cannot be FunctionArgument
+    mIs_FunctionArgument = false;
   } // Binding()
   
   public void Set( Vector<Node> functionArgs, Vector<Node> Sexp ) throws PrimitiveRedefineError {
@@ -450,6 +468,10 @@ class Memory {
     } // else
     
   } // Get_Instance()
+  
+  public void Init() {
+    sSingleTone_Memory = new Memory();
+  } // Init()
   
   public int Add( String symbol, boolean isFunc ) {
     MemoryItem item = new MemoryItem( symbol, isFunc );

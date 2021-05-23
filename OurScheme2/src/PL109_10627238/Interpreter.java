@@ -266,6 +266,7 @@ class Node {
   public Node mL_Child;
   public Node mR_Child;
   public Token mToken;
+  public BindingTB mScope;
   
   public static Node Generate_Empty() {
     return new Node( new Token( "", Symbol.sEMPTYOBJ ) );
