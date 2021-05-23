@@ -20,7 +20,7 @@ public class OurSchemVM {
     Memory.Get_Instance().Init();
     // register inner Binding
     mCallStack = new CallStack();
-    mScope_Global = mCallStack.top();
+    mScope_Global = mCallStack.Top();
     mScope_Cur = mScope_Global;
   } // OurSchemVM()
   
@@ -1914,13 +1914,13 @@ class CallStack {
   public BindingTB Push() {
     // push a stack
     mStack.add( new BindingTB( mStack.elementAt( mStack.size() - 1 ) ) );
-    return top();
+    return Top();
   } // Push()
   
   public BindingTB Push( BindingTB parant ) {
     // push a stack
     mStack.add( new BindingTB( parant ) );
-    return top();
+    return Top();
   } // Push()
   
   public void Pop() {
@@ -1935,9 +1935,9 @@ class CallStack {
     
   } // Pop()
   
-  public BindingTB top() {
+  public BindingTB Top() {
     return mStack.elementAt( mStack.size() - 1 );
-  } // top()
+  } // Top()
   
   public boolean Is_TopLevel() {
     if ( mStack.size() > 1 ) {
@@ -1959,7 +1959,7 @@ class CallStack {
     } // for
     
     System.out.println( "\n" );
-  } // ListCurrentLayer()
+  } // ListLayer()
   
   public Binding Get_Binding( String symbol, BindingTB scope ) throws Throwable {
     
