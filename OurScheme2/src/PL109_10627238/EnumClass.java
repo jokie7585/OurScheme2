@@ -27,6 +27,9 @@ class Symbol {
   public static Symbol sEMPTYOBJ = new Symbol( "sEMPTYOBJ" );
   public static Symbol sBINDING = new Symbol( "sBINDING" );
   public static Symbol sMEMORYADDR = new Symbol( "sMEMORYADDR" );
+  // project3 new symbol
+  public static Symbol sBEGINECONTIMUE = new Symbol( "sBEGINECONTIMUE" );
+  
 } // class Symbol
 
 // projecy2 enum below

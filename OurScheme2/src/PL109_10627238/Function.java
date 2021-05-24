@@ -14,6 +14,12 @@ public class Function {
     
     return tmpNode;
   } // Generate_False()
+  
+  public static Node BeginContinue() {
+    Node tmpNode = new Node( new Token( "))((", Symbol.sBEGINECONTIMUE ) );
+    
+    return tmpNode;
+  } // BeginContinue()
 } // class Function
 
 class InnerFunction {

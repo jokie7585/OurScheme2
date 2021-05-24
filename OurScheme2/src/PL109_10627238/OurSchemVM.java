@@ -1005,6 +1005,10 @@ public class OurSchemVM {
       Vector<Node> paremeters;
       
       try {
+        
+        // System.out.println( "cond functionArgsSexp: " );
+        // Interpreter.NewPrinter( functionArgsSexp );
+        //
         paremeters = ParseParemeter( "cond", 1, functionArgsSexp, true );
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
           if ( InnerFunction.Is_List( paremeters.elementAt( i ) ).Is_Nil() ) {
@@ -1014,7 +1018,8 @@ public class OurSchemVM {
           } // if
           else {
             // test all list has at least two symbol
-            
+            // System.out.println( "slice cond params : " );
+            // Interpreter.NewPrinter( paremeters.elementAt( i ) );
             Vector<Node> executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
           } // else
         } // for
@@ -1027,22 +1032,85 @@ public class OurSchemVM {
       } // catch
       
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
-        // check if List
-        if ( InnerFunction.Is_List( paremeters.elementAt( i ) ).Is_T() ) {
-          Vector<Node> executSequence;
-          // get the executing sequence
-          try {
-            executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
-          } // try
-          catch ( IncorrectArgNumError e ) {
-            mFailedList = Sexp;
-            mCallStack.Pop();
-            throw new ListError( "COND format" );
-          } // catch
+        Vector<Node> executSequence;
+        
+        // get the executing sequence
+        try {
+          executSequence = ParseParemeter( "", 2, paremeters.elementAt( i ), true );
+        } // try
+        catch ( IncorrectArgNumError e ) {
+          mFailedList = Sexp;
+          mCallStack.Pop();
+          throw new ListError( "COND format" );
+        } // catch
+        
+        // execute all
+        if ( i != paremeters.size() - 1 ) {
+          // if true
+          Node condition;
+          // System.out.println( "condition Sexp: " );
+          // Interpreter.NewPrinter( executSequence.elementAt( 0 ) );
           
-          // execute all
-          if ( i < paremeters.size() - 1 ) {
-            // if true
+          // first is condition
+          condition = Evaluate( executSequence.elementAt( 0 ), scope );
+          
+          if ( InnerFunction.And_Is_next( condition ) ) {
+            // System.out.println( "in" );
+            for ( int j = 1 ; j < executSequence.size() ; j++ ) {
+              try {
+                returnNode = Evaluate( executSequence.elementAt( j ), scope );
+                
+              } // try
+              catch ( NoReturnValue e ) {
+                if ( j < executSequence.size() - 1 ) {
+                  returnNode = null;
+                } // if
+                else {
+                  mFailedList = executSequence.elementAt( j );
+                  mCallStack.Pop();
+                  throw new NoReturnValue();
+                } // else
+                
+              } // catch
+              
+            } // for
+            
+            // skip all
+            i = paremeters.size();
+          } // if
+          else {
+            // do nothing
+          } // else
+        } // if
+        else {
+          // System.out.println( "in cond : check else : " );
+          // Interpreter.NewPrinter( executSequence.elementAt( 0 ) );
+          // last one
+          // check if keyword
+          // // else
+          
+          if ( executSequence.elementAt( 0 ).Get_Symbol().compareTo( "else" ) == 0 ) {
+            for ( int j = 1 ; j < executSequence.size() ; j++ ) {
+              
+              try {
+                returnNode = Evaluate( executSequence.elementAt( j ), scope );
+              } // try
+              catch ( NoReturnValue e ) {
+                if ( j < executSequence.size() - 1 ) {
+                  returnNode = null;
+                } // if
+                else {
+                  mFailedList = executSequence.elementAt( j );
+                  mCallStack.Pop();
+                  throw new NoReturnValue();
+                } // else
+                
+              } // catch
+              
+            } // for
+            
+          } // if
+          else {
             Node condition;
             
             try {
@@ -1055,39 +1123,6 @@ public class OurSchemVM {
             } // catch
             
             if ( InnerFunction.And_Is_next( condition ) ) {
-              // System.out.println( "in" );
-              for ( int j = 1 ; j < executSequence.size() ; j++ ) {
-                try {
-                  returnNode = Evaluate( executSequence.elementAt( j ), scope );
-                  
-                } // try
-                catch ( NoReturnValue e ) {
-                  if ( j < executSequence.size() - 1 ) {
-                    returnNode = null;
-                  } // if
-                  else {
-                    mFailedList = executSequence.elementAt( j );
-                    mCallStack.Pop();
-                    throw new NoReturnValue();
-                  } // else
-                  
-                } // catch
-                
-              } // for
-              
-              // skip all
-              i = paremeters.size();
-            } // if
-            else {
-              // do nothing
-            } // else
-          } // if
-          else {
-            
-            // check if keyword
-            // // else
-            
-            if ( executSequence.elementAt( 0 ).Get_Symbol().compareTo( "else" ) == 0 ) {
               for ( int j = 1 ; j < executSequence.size() ; j++ ) {
                 try {
                   returnNode = Evaluate( executSequence.elementAt( j ), scope );
@@ -1108,82 +1143,45 @@ public class OurSchemVM {
               
             } // if
             else {
-              Node condition;
               
-              try {
-                condition = Evaluate( executSequence.elementAt( 0 ), scope );
-              } // try
-              catch ( NoReturnValue e ) {
-                mFailedList = executSequence.elementAt( 0 );
+              if ( returnNode == null ) {
+                mFailedList = Sexp;
                 mCallStack.Pop();
-                throw new UnboundTestCondition();
-              } // catch
-              
-              if ( InnerFunction.And_Is_next( condition ) ) {
-                for ( int j = 1 ; j < executSequence.size() ; j++ ) {
-                  try {
-                    returnNode = Evaluate( executSequence.elementAt( j ), scope );
-                  } // try
-                  catch ( NoReturnValue e ) {
-                    if ( j < executSequence.size() - 1 ) {
-                      returnNode = null;
-                    } // if
-                    else {
-                      mFailedList = executSequence.elementAt( j );
-                      mCallStack.Pop();
-                      throw new NoReturnValue();
-                    } // else
-                    
-                  } // catch
-                  
-                } // for
-                
+                throw new NoReturnValue();
               } // if
-              else {
-                
-                if ( returnNode == null ) {
-                  mFailedList = Sexp;
-                  mCallStack.Pop();
-                  throw new NoReturnValue();
-                } // if
-                
-              } // else
               
             } // else
             
           } // else
           
-        } // if
-        else {
-          mFailedList = Sexp;
-          mCallStack.Pop();
-          throw new ListError( "COND format" );
         } // else
+        
       } // for
       
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "begin" ) ) {
       mCallStack.Push();
+      // System.out.println( "in begin run :" );
+      // Interpreter.NewPrinter( functionArgsSexp );
+      
       Vector<Node> paremeters = ParseParemeter( "begin", 1, functionArgsSexp, true );
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         
         try {
+          
           returnNode = Evaluate( paremeters.elementAt( i ), scope );
+          
         } // try
         catch ( NoReturnValue e ) {
-          if ( i < paremeters.size() - 1 ) {
-            returnNode = null;
-          } // if
-          else {
-            mFailedList = paremeters.elementAt( i );
-            mCallStack.Pop();
-            throw new NoReturnValue();
-          } // else
+          
+          returnNode = Function.BeginContinue();
           
         } // catch
         
       } // for
+      
+      // System.out.println( "okok return " );
       
       mCallStack.Pop();
     } // else if
@@ -1448,6 +1446,11 @@ public class OurSchemVM {
           } // catch
           
         } // for
+        
+        // process begin return
+        if ( returnNode.mToken.mType == Symbol.sBEGINECONTIMUE ) {
+          returnNode = null;
+        } // if
         
         mCallStack.Pop();
         // System.out.println( "function return : " +
