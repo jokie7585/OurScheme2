@@ -1262,7 +1262,7 @@ public class OurSchemVM {
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "let" ) ) {
-      mCallStack.Push();
+      BindingTB cur = mCallStack.Push();
       Vector<Node> parameter;
       Vector<Node> executableSexp;
       Vector<Node> argSymbol = new Vector<Node>();
@@ -1339,7 +1339,7 @@ public class OurSchemVM {
       } // catch
       
       for ( int i = 0 ; i < executableSexp.size() ; i++ ) {
-        returnNode = Evaluate( executableSexp.elementAt( i ), scope );
+        returnNode = Evaluate( executableSexp.elementAt( i ), cur );
       } // for
       
       mCallStack.Pop();
