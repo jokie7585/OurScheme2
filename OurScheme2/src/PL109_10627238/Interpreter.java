@@ -225,20 +225,42 @@ public class Interpreter {
     } // if
     else if ( token.mType == Symbol.sFLOAT ) {
       float temp = Float.parseFloat( token.mContent ) * 1000;
-      
+      boolean isminus = false;
       int round = 0;
+      
+      if ( temp >= 0 ) {
+        
+      } // if
+      else {
+        temp = temp * -1;
+        isminus = true;
+      } // else
       
       while ( round < temp ) {
         round = round + 1;
         
       } // while
       
-      String result = Integer.toString( round );
+      float up = round - temp;
+      float down = temp - ( round - 1 );
+      
+      String result;
+      
+      if ( up > down ) {
+        result = Integer.toString( round - 1 );
+      } // if
+      else {
+        result = Integer.toString( round );
+      } // else
       
       while ( result.length() < 4 ) {
         result = "0" + result;
         
       } // while
+      
+      if ( isminus ) {
+        result = "-" + result;
+      } // if
       
       result = result.substring( 0, result.length() - 3 ) + "." + result.substring( result.length() - 3 );
       
