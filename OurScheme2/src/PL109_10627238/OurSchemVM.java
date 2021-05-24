@@ -174,6 +174,11 @@ public class OurSchemVM {
       throw new EvaluateNonBinding();
     } // catch
     
+    if ( functionBind == null ) {
+      mFailedList = Sexp.mL_Child;
+      throw new EvaluateNonBinding();
+    } // if
+    
     String funcnName = functionBind.Get_Symbol();
     Node functionArgsSexp = Sexp.mR_Child;
     
@@ -612,6 +617,10 @@ public class OurSchemVM {
           
         } // catch
         catch ( PrimitiveRedefineError e ) {
+          mCallStack.Pop();
+          throw new MainSexpError( "DEFINE format" );
+        } // catch
+        catch ( IncorrectArgNumError e ) {
           mCallStack.Pop();
           throw new MainSexpError( "DEFINE format" );
         } // catch
@@ -1388,7 +1397,7 @@ public class OurSchemVM {
         } // for
       } // try
       catch ( NoReturnValue e ) {
-        throw new NoReturnValue();
+        throw new DefineOrLetANoReturn();
       } // catch
       
       // System.out.println( "let success load all : " );

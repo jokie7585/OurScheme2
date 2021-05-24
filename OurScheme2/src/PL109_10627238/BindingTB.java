@@ -65,15 +65,22 @@ public class BindingTB {
       // start define process
       
       targetSymbolString = bindingTarget.mL_Child.mToken.mContent;
-      Vector<Node> functionBody = OurSchemVM.ParseParemeter( "", 0, bindingSexp, true );
+      Vector<Node> functionBody = OurSchemVM.ParseParemeter( "", 1, bindingSexp, true );
       
-      // process project 3 special case
+      // process project 3 lambda plus define special case
       // // define function binding with special lambda syntax
       BindingTB scope = OurSchemVM.Get_Instance().mScope_Global;
-      Node func = OurSchemVM.Get_Instance().Evaluate( InnerFunction.Car( functionBody.elementAt( 0 ) ),
-          scope );
       
-      if ( functionBody.size() == 1 && func.Get_Symbol().equals( "(lambda)" ) ) {
+      Node func;
+      
+      try {
+        func = OurSchemVM.Get_Instance().Evaluate( InnerFunction.Car( functionBody.elementAt( 0 ) ), scope );
+      } // try
+      catch ( Throwable e ) {
+        func = null;
+      } // catch
+      
+      if ( functionBody.size() == 1 && func != null && func.Get_Symbol().equals( "(lambda)" ) ) {
         Binding target = I_get( targetSymbolString );
         if ( target == null ) {
           // insert at current binding table
@@ -130,7 +137,12 @@ public class BindingTB {
         // Interpreter.NewPrinter( bindingSexp.mL_Child );
         
         bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child, scope );
-        
+        try {
+          bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child, scope );
+        } // try
+        catch ( NoReturnValue e ) {
+          throw new DefineOrLetANoReturn();
+        } // catch
         // System.out.println( "evaluate result : " );
         // Interpreter.NewPrinter( bindingValue );
         

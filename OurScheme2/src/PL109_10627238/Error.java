@@ -146,6 +146,14 @@ class UnboundTestCondition extends ListError {
   } // UnboundTestCondition()
 } // class UnboundTestCondition
 
+class DefineOrLetANoReturn extends ListError {
+  // PALProject3 the d type
+  public DefineOrLetANoReturn() {
+    super( "no return value" );
+  } // DefineOrLetANoReturn()
+  
+} // class DefineOrLetANoReturn
+
 class EvaluateNonBinding extends ListError {
   // PALProject3 the e type
   public EvaluateNonBinding() {

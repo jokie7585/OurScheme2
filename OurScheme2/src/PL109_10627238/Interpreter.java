@@ -224,7 +224,15 @@ public class Interpreter {
       return Integer.toString( Integer.parseInt( token.mContent ) );
     } // if
     else if ( token.mType == Symbol.sFLOAT ) {
-      return String.format( "%.3f", Float.parseFloat( token.mContent ) );
+      String result = Integer.toString( Math.round( Float.parseFloat( token.mContent ) * 1000 ) );
+      while ( result.length() < 4 ) {
+        result = "0" + result;
+        
+      } // while
+      
+      result = result.substring( 0, result.length() - 3 ) + "." + result.substring( result.length() - 3 );
+      
+      return result;
     } // else if
     else if ( token.mType == Symbol.sSYMBOL || token.mType == Symbol.sSTRING ) {
       return token.mContent;
