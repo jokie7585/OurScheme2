@@ -312,7 +312,7 @@ class Node {
   
   public void Pop_Scope() {
     mScope.removeElementAt( mScope.size() - 1 );
-  } // Pop()
+  } // Pop_Scope()
   
   public boolean Is_Dot() {
     if ( Get().mToken.mType == Symbol.sDOT ) {

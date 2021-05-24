@@ -1201,8 +1201,13 @@ public class OurSchemVM {
           
         } // try
         catch ( NoReturnValue e ) {
-          // System.out.println( "in begin NoReturnValue :" );
-          returnNode = Function.BeginContinue();
+          if ( i == paremeters.size() - 1 ) {
+            mFailedList = paremeters.elementAt( i );
+            throw new NoReturnValue();
+          } // if
+          else {
+            returnNode = null;
+          } // else
           
         } // catch
         
@@ -1376,9 +1381,22 @@ public class OurSchemVM {
       // mCallStack.ListLayer( cur );
       
       for ( int i = 0 ; i < executableSexp.size() ; i++ ) {
-        Scope_Bind( executableSexp.elementAt( i ), cur );
-        returnNode = Evaluate( executableSexp.elementAt( i ), cur );
-        Scope_DeBind( executableSexp.elementAt( i ) );
+        try {
+          Scope_Bind( executableSexp.elementAt( i ), cur );
+          returnNode = Evaluate( executableSexp.elementAt( i ), cur );
+          Scope_DeBind( executableSexp.elementAt( i ) );
+        } // try
+        catch ( NoReturnValue e ) {
+          if ( i == executableSexp.size() - 1 ) {
+            Scope_DeBind( executableSexp.elementAt( i ) );
+            mFailedList = executableSexp.elementAt( i );
+            throw new NoReturnValue();
+          } // if
+          else {
+            Scope_DeBind( executableSexp.elementAt( i ) );
+          } // else
+        } // catch
+        
       } // for
       
       mCallStack.Pop();
@@ -1475,18 +1493,24 @@ public class OurSchemVM {
             Scope_DeBind( fnc.mFuncBodyNode.elementAt( i ) );
           } // try
           catch ( NoReturnValue e ) {
-            mFailedList = Sexp;
-            mCallStack.Pop();
-            throw new NoReturnValue();
+            if ( i == fnc.mFuncBodyNode.size() - 1 ) {
+              Scope_DeBind( fnc.mFuncBodyNode.elementAt( i ) );
+              mFailedList = Sexp;
+              mCallStack.Pop();
+              throw new NoReturnValue();
+            } // if
+            else {
+              Scope_DeBind( fnc.mFuncBodyNode.elementAt( i ) );
+            } // else
             
           } // catch
           
         } // for
         
-        // process begin return
-        if ( returnNode.mToken.mType == Symbol.sBEGINECONTIMUE ) {
-          returnNode = null;
-        } // if
+        // // process begin return
+        // if ( returnNode.mToken.mType == Symbol.sBEGINECONTIMUE ) {
+        // returnNode = null;
+        // } // if
         
         mCallStack.Pop();
         // System.out.println( "function return : " +
