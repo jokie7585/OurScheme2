@@ -77,12 +77,36 @@ public class OurSchemVM {
       if ( Sexp.mToken.mType == Symbol.sSYMBOL ) {
         // if symbol
         
-        Binding binding;
-        if ( Sexp.mScope != null ) {
-          binding = mCallStack.Get_Binding( Sexp.mToken.mContent, Sexp.mScope );
+        Binding binding = null;
+        
+        if ( Sexp.mScope.size() > 0 ) {
+          
+          for ( int i = Sexp.mScope.size() - 1 ; i >= 0 ; i-- ) {
+            // System.out.println( "find symbol : " + Sexp.mToken.mContent + "
+            // in scope :" );
+            // mCallStack.ListLayer( Sexp.mScope.elementAt( i ) );
+            
+            if ( binding == null ) {
+              // System.out.println( "call Get_Binding" );
+              binding = mCallStack.Get_Binding( Sexp.mToken.mContent, Sexp.mScope.elementAt( i ) );
+            } // if
+            else {
+              
+              i = -1;
+            } // else
+            
+          } // for
+          
+          if ( binding == null ) {
+            binding = mCallStack.Get_Binding( Sexp.mToken.mContent, mScope_Global );
+          } // if
+          
+          // System.out.println( "geted : " );
+          // Interpreter.NewPrinter( binding.Get() );
+          
         } // if
         else {
-          binding = mCallStack.Get_Binding( Sexp.mToken.mContent, scope );
+          binding = mCallStack.Get_Binding( Sexp.mToken.mContent, mScope_Global );
         } // else
         
         if ( binding == null ) {
@@ -95,6 +119,7 @@ public class OurSchemVM {
           // Interpreter.NewPrinter( binding.Get() );
           return binding.Get();
         } // else
+        
       } // if
       else {
         // if pure atom
@@ -567,7 +592,7 @@ public class OurSchemVM {
           
           returnNode = Node.Generate_String( bindTargetString + " defined" );
         } // try
-        catch ( ListError e ) {
+        catch ( MainSexpError e ) {
           mCallStack.Pop();
           throw new MainSexpError( "DEFINE format" );
           
@@ -1162,19 +1187,21 @@ public class OurSchemVM {
     } // else if
     else if ( funcnName.equals( "begin" ) ) {
       mCallStack.Push();
-      // System.out.println( "in begin run :" );
+      // System.out.println( "begin Expression :" );
       // Interpreter.NewPrinter( functionArgsSexp );
       
       Vector<Node> paremeters = ParseParemeter( "begin", 1, functionArgsSexp, true );
       for ( int i = 0 ; i < paremeters.size() ; i++ ) {
         
         try {
-          
+          // System.out.println( "in begin run :" );
+          // Interpreter.NewPrinter( paremeters.elementAt( i ) );
           returnNode = Evaluate( paremeters.elementAt( i ), scope );
+          // System.out.println( "in begin end :" );
           
         } // try
         catch ( NoReturnValue e ) {
-          
+          // System.out.println( "in begin NoReturnValue :" );
           returnNode = Function.BeginContinue();
           
         } // catch
@@ -1262,6 +1289,13 @@ public class OurSchemVM {
       mCallStack.Pop();
     } // else if
     else if ( funcnName.equals( "let" ) ) {
+      // System.out.println( "let befoe load : " );
+      // System.out.println( " carry scope: " );
+      // mCallStack.ListLayer( scope );
+      // System.out.println( " top stack scope: " );
+      // mCallStack.ListLayer( mCallStack.Top() );
+      // System.out.println( " before top stack scope: " );
+      // mCallStack.ListLayer( mCallStack.Top().mPreTable );
       BindingTB cur = mCallStack.Push();
       Vector<Node> parameter;
       Vector<Node> executableSexp;
@@ -1338,8 +1372,13 @@ public class OurSchemVM {
         throw new NoReturnValue();
       } // catch
       
+      // System.out.println( "let success load all : " );
+      // mCallStack.ListLayer( cur );
+      
       for ( int i = 0 ; i < executableSexp.size() ; i++ ) {
+        Scope_Bind( executableSexp.elementAt( i ), cur );
         returnNode = Evaluate( executableSexp.elementAt( i ), cur );
+        Scope_DeBind( executableSexp.elementAt( i ) );
       } // for
       
       mCallStack.Pop();
@@ -1378,7 +1417,6 @@ public class OurSchemVM {
       // System.out.println( "user-define : " + functionBind.Get_Symbol() );
       
       if ( functionBind.Get().mToken.mType == Symbol.sPROCEDUREL ) {
-        // mCallStack.ListCurrentLayer();
         
         BindingTB cur = mCallStack.Push( scope );
         
@@ -1427,8 +1465,6 @@ public class OurSchemVM {
           mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ), true );
         } // for
         
-        // mCallStack.ListLayer( cur );
-        
         // flattened the function body to avoid it works like
         // nested call
         for ( int i = 0 ; i < fnc.mFuncBodyNode.size() ; i++ ) {
@@ -1455,7 +1491,7 @@ public class OurSchemVM {
         mCallStack.Pop();
         // System.out.println( "function return : " +
         // functionBind.Get().Get_Symbol() );
-        // mCallStack.ListLayer( mCallStack.top() );
+        // mCallStack.ListLayer( mCallStack.Top() );
       } // if
       else {
         mFailedList = Sexp;
@@ -1485,7 +1521,7 @@ public class OurSchemVM {
         
       } // if
       else {
-        Sexp.mScope = Scope;
+        Sexp.Push_Scope( Scope );
         
       } // else
       
@@ -1502,7 +1538,7 @@ public class OurSchemVM {
         
       } // if
       else {
-        Sexp.mScope = null;
+        Sexp.Pop_Scope();
         
       } // else
       
@@ -1951,25 +1987,32 @@ class CallStack {
   } // Is_TopLevel()
   
   public void ListLayer( BindingTB bt ) throws Throwable {
+    if ( bt == null ) {
+      System.out.println( "gloadbal no pretable" );
+    } // if
+    else {
+      Vector<Binding> tmp = bt.mBindings;
+      System.out.println( "\nList Binding IsArgument" );
+      System.out.println( "symbol  value" );
+      for ( int i = 0 ; i < tmp.size() ; i++ ) {
+        System.out.println( tmp.elementAt( i ).mSymbol + "\t" + tmp.elementAt( i ).Get() + "\t"
+            + tmp.elementAt( i ).mIs_FunctionArgument );
+        Interpreter.NewPrinter( tmp.elementAt( i ).Get().Get() );
+      } // for
+      
+      System.out.println( "\n" );
+    } // else
     
-    Vector<Binding> tmp = bt.mBindings;
-    System.out.println( "\nList Binding IsArgument" );
-    System.out.println( "symbol  value" );
-    for ( int i = 0 ; i < tmp.size() ; i++ ) {
-      System.out.println( tmp.elementAt( i ).mSymbol + "\t" + tmp.elementAt( i ).Get() + "\t"
-          + tmp.elementAt( i ).mIs_FunctionArgument );
-      Interpreter.NewPrinter( tmp.elementAt( i ).Get().Get() );
-    } // for
-    
-    System.out.println( "\n" );
   } // ListLayer()
   
   public Binding Get_Binding( String symbol, BindingTB scope ) throws Throwable {
     
     if ( scope != null ) {
+      
       return scope.Get( symbol );
     } // if
     else {
+      
       BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
       return tmp.Get( symbol );
     } // else

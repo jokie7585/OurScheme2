@@ -123,7 +123,16 @@ public class BindingTB {
         
         // Set a atom symbol binding need to evaluate the bindingSexp
         BindingTB scope = OurSchemVM.Get_Instance().mScope_Global;
-        Node bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child, scope );
+        
+        Node bindingValue;
+        
+        // System.out.println( "evaluate symbol define : " );
+        // Interpreter.NewPrinter( bindingSexp.mL_Child );
+        
+        bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child, scope );
+        
+        // System.out.println( "evaluate result : " );
+        // Interpreter.NewPrinter( bindingValue );
         
         if ( target == null ) {
           // insert at current binding table
@@ -262,34 +271,37 @@ public class BindingTB {
   } // Set_local()
   
   public Binding Get( String symbol ) throws Throwable {
+    // System.out.println( "target : " + symbol );
     
     for ( int i = 0 ; i < mBindings.size() ; i++ ) {
+      // System.out.println( "cur : " + mBindings.elementAt( i ).mSymbol );
+      
       if ( mBindings.elementAt( i ).mSymbol.equals( symbol ) ) {
         return mBindings.elementAt( i );
       } // if
       
     } // for
     
-    if ( mPreTable != null ) {
-      
-      BindingTB preTb = mPreTable;
-      
-      while ( preTb != null ) {
-        for ( int i = 0 ; i < preTb.mBindings.size() ; i++ ) {
-          if ( preTb.mBindings.elementAt( i ).mSymbol.equals( symbol ) ) {
-            
-            if ( !preTb.mBindings.elementAt( i ).mIs_FunctionArgument ) {
-              return preTb.mBindings.elementAt( i );
-            } // if
-            
-          } // if
-          
-        } // for
-        //
-        preTb = preTb.mPreTable;
-        
-      } // while
-    } // if
+    // if ( mPreTable != null ) {
+    //
+    // BindingTB preTb = mPreTable;
+    //
+    // while ( preTb != null ) {
+    // for ( int i = 0 ; i < preTb.mBindings.size() ; i++ ) {
+    // if ( preTb.mBindings.elementAt( i ).mSymbol.equals( symbol ) ) {
+    //
+    // if ( !preTb.mBindings.elementAt( i ).mIs_FunctionArgument ) {
+    // return preTb.mBindings.elementAt( i );
+    // } // if
+    //
+    // } // if
+    //
+    // } // for
+    // //
+    // preTb = preTb.mPreTable;
+    //
+    // } // while
+    // } // if
     
     return null;
   } // Get()

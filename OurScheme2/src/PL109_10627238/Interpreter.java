@@ -266,7 +266,7 @@ class Node {
   public Node mL_Child;
   public Node mR_Child;
   public Token mToken;
-  public BindingTB mScope;
+  public Vector<BindingTB> mScope;
   
   public static Node Generate_Empty() {
     return new Node( new Token( "", Symbol.sEMPTYOBJ ) );
@@ -282,11 +282,12 @@ class Node {
   
   public Node() {
     mToken = new Token( ".", Symbol.sDOT );
-    
+    mScope = new Vector<BindingTB>();
   } // Node()
   
   public Node( Token token ) {
     mToken = token;
+    mScope = new Vector<BindingTB>();
   } // Node()
   
   public Node Get() {
@@ -304,6 +305,14 @@ class Node {
   public String Get_Symbol() {
     return mToken.mContent;
   } // Get_Symbol()
+  
+  public void Push_Scope( BindingTB tb ) {
+    mScope.add( tb );
+  } // Push_Scope()
+  
+  public void Pop_Scope() {
+    mScope.removeElementAt( mScope.size() - 1 );
+  } // Pop()
   
   public boolean Is_Dot() {
     if ( Get().mToken.mType == Symbol.sDOT ) {
