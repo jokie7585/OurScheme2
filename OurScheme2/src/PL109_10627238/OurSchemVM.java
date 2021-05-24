@@ -98,15 +98,27 @@ public class OurSchemVM {
           } // for
           
           if ( binding == null ) {
+            // System.out.println( "find symbol : " + Sexp.mToken.mContent + "
+            // in scope (carry):" );
+            binding = mCallStack.Get_Binding( Sexp.mToken.mContent, scope );
+          } // if
+          
+          if ( binding == null ) {
+            // System.out.println( "find symbol : " + Sexp.mToken.mContent + "
+            // in scope (global):" );
             binding = mCallStack.Get_Binding( Sexp.mToken.mContent, mScope_Global );
           } // if
           
-          // System.out.println( "geted : " );
-          // Interpreter.NewPrinter( binding.Get() );
-          
         } // if
         else {
-          binding = mCallStack.Get_Binding( Sexp.mToken.mContent, mScope_Global );
+          if ( binding == null ) {
+            binding = mCallStack.Get_Binding( Sexp.mToken.mContent, scope );
+          } // if
+          
+          if ( binding == null ) {
+            binding = mCallStack.Get_Binding( Sexp.mToken.mContent, mScope_Global );
+          } // if
+          
         } // else
         
         if ( binding == null ) {
@@ -116,6 +128,8 @@ public class OurSchemVM {
           // System.out.println( "dereference : " + Sexp.mToken.mContent );
           // System.out.println( "get binding : " + binding.Get().Get_Symbol() +
           // " : " );
+          // Interpreter.NewPrinter( binding.Get() );
+          // System.out.println( "geted : " );
           // Interpreter.NewPrinter( binding.Get() );
           return binding.Get();
         } // else
@@ -1370,7 +1384,7 @@ public class OurSchemVM {
         for ( int i = 0 ; i < argSymbol.size() ; i++ ) {
           mFailedList = argValue.elementAt( i );
           mCallStack.Set_Binding_local( argSymbol.elementAt( i ), Evaluate( argValue.elementAt( i ), scope ),
-              false );
+              false, cur );
         } // for
       } // try
       catch ( NoReturnValue e ) {
@@ -1480,14 +1494,21 @@ public class OurSchemVM {
         
         // load in local variable
         for ( int i = 0 ; i < paramNum ; i++ ) {
-          mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ), true );
+          mCallStack.Set_Binding_local( argSymbol.elementAt( i ), argValue.elementAt( i ), true, cur );
         } // for
+        
+        // System.out.println( "load all var in scope : " );
+        // mCallStack.ListLayer( cur );
         
         // flattened the function body to avoid it works like
         // nested call
         for ( int i = 0 ; i < fnc.mFuncBodyNode.size() ; i++ ) {
           
           try {
+            // System.out.println( "run bady :" );
+            // Interpreter.NewPrinter( fnc.mFuncBodyNode.elementAt( i ) );
+            // System.out.println( "in scope :" );
+            // mCallStack.ListLayer( cur );
             Scope_Bind( fnc.mFuncBodyNode.elementAt( i ), cur );
             returnNode = Evaluate( fnc.mFuncBodyNode.elementAt( i ), cur );
             Scope_DeBind( fnc.mFuncBodyNode.elementAt( i ) );
@@ -2037,15 +2058,14 @@ class CallStack {
     } // if
     else {
       
-      BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
-      return tmp.Get( symbol );
+      return null;
     } // else
     
   } // Get_Binding()
   
-  public String Set_Binding_local( Node bindingTarget, Node Sexp, boolean isFuncArgs ) throws Throwable {
-    BindingTB tmp = mStack.elementAt( mStack.size() - 1 );
-    return tmp.Set_local( bindingTarget, Sexp, isFuncArgs );
+  public String Set_Binding_local( Node bindingTg, Node Sexp, boolean i, BindingTB b ) throws Throwable {
+    
+    return b.Set_local( bindingTg, Sexp, i );
   } // Set_Binding_local()
   
   public String Set_Binding( Node bindingTarget, Node Sexp ) throws Throwable {
