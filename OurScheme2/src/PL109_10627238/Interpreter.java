@@ -224,7 +224,17 @@ public class Interpreter {
       return Integer.toString( Integer.parseInt( token.mContent ) );
     } // if
     else if ( token.mType == Symbol.sFLOAT ) {
-      String result = Integer.toString( Math.round( Float.parseFloat( token.mContent ) * 1000 ) );
+      float temp = Float.parseFloat( token.mContent ) * 1000;
+      
+      int round = 0;
+      
+      while ( round < temp ) {
+        round = round + 1;
+        
+      } // while
+      
+      String result = Integer.toString( round );
+      
       while ( result.length() < 4 ) {
         result = "0" + result;
         
