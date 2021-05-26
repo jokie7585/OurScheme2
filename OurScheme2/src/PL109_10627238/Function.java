@@ -729,9 +729,6 @@ class InnerFunction {
         Sexp.mToken.mContent = "))" + Sexp.mToken.mContent;
       } // if
     } // if
-    else {
-      Sequentialize( Sexp );
-    } // else
     
     return Sexp;
   } // ByPass()

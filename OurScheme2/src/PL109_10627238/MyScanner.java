@@ -51,21 +51,23 @@ public class MyScanner {
     mTokenStream = null;
     mLine = 0;
     
-    // read in new line
-    System.out.print( "> " );
-    ReadInALine();
   } // ErrorReset()
   
   public void FinishReset() throws Throwable {
     // if cur token stream not empty reset m line to 1
     // else reset to 0
-    mTokenStream.ResetCol();
-    
-    if ( mTokenStream.Is_Empty() ) {
-      mLine = 0;
+    if ( mTokenStream != null ) {
+      mTokenStream.ResetCol();
+      if ( mTokenStream.Is_Empty() ) {
+        mLine = 0;
+      } // if
+      else {
+        mLine = 1;
+      } // else
     } // if
     else {
-      mLine = 1;
+      // if ErrorReset is called by ourschemeVM
+      // do nothing
     } // else
     
   } // FinishReset()

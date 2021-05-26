@@ -136,7 +136,6 @@ public class BindingTB {
         // System.out.println( "evaluate symbol define : " );
         // Interpreter.NewPrinter( bindingSexp.mL_Child );
         
-        bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child, scope );
         try {
           bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child, scope );
         } // try

@@ -641,6 +641,99 @@ public class OurSchemVM {
       } // else
       
     } // else if
+    else if ( funcnName.equals( "set!" ) ) {
+      // no need to push a new call stack
+      
+      mCallStack.Push();
+      
+      try {
+        Vector<Node> paremeters = new Vector<Node>();
+        try {
+          paremeters = ParseParemeter( "set!", 2, functionArgsSexp, false );
+        } // try
+        catch ( IncorrectArgNumError e ) {
+          mFailedList = Sexp;
+          throw new FormatError( "SET! format" );
+        } // catch
+        
+        if ( !InnerFunction.Is_symbol( paremeters.elementAt( 0 ) ).Is_T() ) {
+          mFailedList = Sexp;
+          throw new FormatError( "SET!  format" );
+        } // if
+        
+        Node valueNode = Evaluate( paremeters.elementAt( 1 ), scope );
+        Node symbol = paremeters.elementAt( 0 );
+        Binding binding = null;
+        
+        // System.out.println( "find bind from symbol : " +
+        // symbol.mToken.mContent );
+        
+        if ( symbol.mScope.size() > 0 ) {
+          
+          for ( int i = symbol.mScope.size() - 1 ; i >= 0 ; i-- ) {
+            // System.out.println( "find symbol : " + Sexp.mToken.mContent + "
+            // in scope :" );
+            // mCallStack.ListLayer( Sexp.mScope.elementAt( i ) );
+            
+            if ( binding == null ) {
+              // System.out.println( "find in scope : " );
+              // mCallStack.ListLayer( symbol.mScope.elementAt( i ) );
+              // System.out.println( "call Get_Binding" );
+              binding = mCallStack.Get_Binding( symbol.mToken.mContent, symbol.mScope.elementAt( i ) );
+            } // if
+            else {
+              
+              i = -1;
+            } // else
+            
+          } // for
+          
+          if ( binding == null ) {
+            // System.out.println( "find symbol : " + Sexp.mToken.mContent + "
+            // in scope (carry):" );
+            binding = mCallStack.Get_Binding( symbol.mToken.mContent, scope );
+          } // if
+          
+          if ( binding == null ) {
+            // System.out.println( "find symbol : " + Sexp.mToken.mContent + "
+            // in scope (global):" );
+            binding = mCallStack.Get_Binding( symbol.mToken.mContent, mScope_Global );
+          } // if
+          
+        } // if
+        
+        if ( binding == null ) {
+          // System.out.println( "set new binding" );
+          mCallStack.Set_Binding_local( symbol, valueNode, false, mScope_Global );
+          returnNode = Evaluate( symbol, scope );
+        } // if
+        else {
+          // System.out.println( "set exit binding" );
+          binding.Set( valueNode );
+          returnNode = binding.Get();
+        } // else
+        
+      } // try
+      catch ( MainSexpError e ) {
+        mCallStack.Pop();
+        mFailedList = Sexp;
+        throw new FormatError( "SET!  format" );
+        
+      } // catch
+      catch ( PrimitiveRedefineError e ) {
+        mFailedList = Sexp;
+        mCallStack.Pop();
+        throw new FormatError( "SET!  format" );
+      } // catch
+      catch ( IncorrectArgNumError e ) {
+        mFailedList = Sexp;
+        mCallStack.Pop();
+        throw new FormatError( "SET!  format" );
+      } // catch
+      
+      mCallStack.Pop();
+      
+    } // else if
     else if ( funcnName.equals( "car" ) ) {
       mCallStack.Push();
       
@@ -1453,6 +1546,203 @@ public class OurSchemVM {
       } // else
       
     } // else if
+    else if ( funcnName.equals( "create-error-object" ) ) {
+      mCallStack.Push();
+      // verbose
+      Vector<Node> parameter = ParseParemeter( "create-error-object", 1, functionArgsSexp, false );
+      
+      Node msgNode;
+      
+      try {
+        msgNode = Evaluate( parameter.elementAt( 0 ), scope );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = parameter.elementAt( 0 );
+        throw new NoReturnParame();
+      } // catch
+      
+      if ( InnerFunction.Is_String( msgNode ).Is_T() ) {
+        returnNode = Node.Generate_Error( msgNode.Get_Symbol() );
+      } // if
+      
+      mCallStack.Pop();
+      
+    } // else if
+    else if ( funcnName.equals( "error-object?" ) ) {
+      mCallStack.Push();
+      // verbose
+      Vector<Node> parameter = ParseParemeter( "error-object?", 1, functionArgsSexp, false );
+      
+      Node msgNode;
+      
+      try {
+        msgNode = Evaluate( parameter.elementAt( 0 ), scope );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = parameter.elementAt( 0 );
+        throw new NoReturnParame();
+      } // catch
+      
+      if ( msgNode.mToken.mType == Symbol.sERROR ) {
+        returnNode = Function.Generate_True();
+      } // if
+      else {
+        returnNode = Function.Generate_False();
+      } // else
+      
+      mCallStack.Pop();
+      
+    } // else if
+    else if ( funcnName.equals( "read" ) ) {
+      mCallStack.Push();
+      Vector<Node> parameter = ParseParemeter( "read", 0, functionArgsSexp, false );
+      
+      try {
+        returnNode = Interpreter.ReadSexp();
+      } // try
+      catch ( EOFEncounterError e ) {
+        // returnNode = Node
+        // .Generate_Error( "\"ERROR : END-OF-FILE encountered when there should
+        // be more input\"" );
+        
+        throw e;
+      } // catch
+      catch ( UnexpectedError e ) {
+        StringBuffer tmpBuffer = new StringBuffer();
+        
+        tmpBuffer.append( "\"ERROR (unexpected character) : " );
+        tmpBuffer.append( "Line " );
+        tmpBuffer.append( MyScanner.Get_Instance().CurLine() );
+        tmpBuffer.append( " Column " );
+        tmpBuffer.append( MyScanner.Get_Instance().PreTokenCol() );
+        tmpBuffer.append( " '" );
+        tmpBuffer.append( e.tokenString.charAt( 0 ) );
+        tmpBuffer.append( "'\"" );
+        // System.out.println( "in do : " + tmpBuffer.toString() );
+        
+        returnNode = Node.Generate_Error( tmpBuffer.toString() );
+        // Interpreter.NewPrinter( returnNode );
+        
+        MyScanner.Get_Instance().ErrorReset();
+        mCallStack.Pop();
+      } // catch
+      
+    } // else if
+    else if ( funcnName.equals( "write" ) ) {
+      mCallStack.Push();
+      Vector<Node> parameter = ParseParemeter( "write", 1, functionArgsSexp, false );
+      Node msgNode;
+      
+      try {
+        msgNode = Evaluate( parameter.elementAt( 0 ), scope );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = parameter.elementAt( 0 );
+        throw new NoReturnParame();
+      } // catch
+      
+      Interpreter.NewPrinter( msgNode );
+      returnNode = msgNode;
+      
+      mCallStack.Pop();
+    } // else if
+    else if ( funcnName.equals( "display-string" ) ) {
+      mCallStack.Push();
+      Vector<Node> parameter = ParseParemeter( "display-string", 1, functionArgsSexp, false );
+      Node value = parameter.elementAt( 0 );
+      
+      try {
+        value = Evaluate( parameter.elementAt( 0 ), scope );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = parameter.elementAt( 0 );
+        throw new NoReturnParame();
+      } // catch
+      
+      if ( InnerFunction.Is_String( value ).Is_T() || value.mToken.mType == Symbol.sERROR ) {
+        String str = Interpreter.Evaluate( value.Get().mToken );
+        System.out.print( str.substring( 1, str.length() - 1 ) );
+        returnNode = value;
+      } // if
+      else {
+        mFailedList = value;
+        throw new OperationError( "display-string" );
+      } // else
+      
+      mCallStack.Pop();
+    } // else if
+    else if ( funcnName.equals( "newline" ) ) {
+      mCallStack.Push();
+      Vector<Node> parameter = ParseParemeter( "newline", 0, functionArgsSexp, false );
+      Node msgNode;
+      
+      System.out.println( "" );
+      returnNode = Function.Generate_False();
+      
+      mCallStack.Pop();
+    } // else if
+    else if ( funcnName.equals( "symbol->string" ) ) {
+      mCallStack.Push();
+      Vector<Node> parameter = ParseParemeter( "symbol->string", 1, functionArgsSexp, false );
+      Node msgNode;
+      
+      try {
+        msgNode = Evaluate( parameter.elementAt( 0 ), scope );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = parameter.elementAt( 0 );
+        throw new NoReturnParame();
+      } // catch
+      
+      if ( InnerFunction.Is_symbol( msgNode ).Is_T() ) {
+        returnNode = Node.Generate_String( "\"" + Interpreter.Evaluate( msgNode.Get().mToken ) + "\"" );
+      } // if
+      else {
+        mFailedList = msgNode;
+        throw new OperationError( "symbol->string" );
+      } // else
+      
+      mCallStack.Pop();
+    } // else if
+    else if ( funcnName.equals( "number->string" ) ) {
+      mCallStack.Push();
+      Vector<Node> parameter = ParseParemeter( "number->string", 1, functionArgsSexp, false );
+      Node msgNode;
+      
+      try {
+        msgNode = Evaluate( parameter.elementAt( 0 ), scope );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = parameter.elementAt( 0 );
+        throw new NoReturnParame();
+      } // catch
+      
+      if ( InnerFunction.Is_Number( msgNode ).Is_T() ) {
+        returnNode = Node.Generate_String( "\"" + Interpreter.Evaluate( msgNode.Get().mToken ) + "\"" );
+      } // if
+      else {
+        mFailedList = msgNode;
+        throw new OperationError( "number->string" );
+      } // else
+      
+      mCallStack.Pop();
+    } // else if
+    else if ( funcnName.equals( "eval" ) ) {
+      mCallStack.Push();
+      Vector<Node> parameter = ParseParemeter( "eval", 1, functionArgsSexp, false );
+      
+      try {
+        returnNode = Evaluate( parameter.elementAt( 0 ), scope );
+      } // try
+      catch ( NoReturnValue e ) {
+        mFailedList = parameter.elementAt( 0 );
+        throw new NoReturnParame();
+      } // catch
+      
+      returnNode = Evaluate( returnNode, scope );
+      
+      mCallStack.Pop();
+    } // else if
     else {
       // call custom binding function
       // System.out.println( "user-define : " + functionBind.Get_Symbol() );
@@ -1995,6 +2285,18 @@ class CallStack {
     Set_Binding_inner( "let", true );
     Set_Binding_inner( "verbose?", true );
     Set_Binding_inner( "verbose", true );
+    // project4
+    
+    Set_Binding_inner( "create-error-object", true );
+    Set_Binding_inner( "error-object?", true );
+    Set_Binding_inner( "read", true );
+    Set_Binding_inner( "write", true );
+    Set_Binding_inner( "display-string", true );
+    Set_Binding_inner( "newline", true );
+    Set_Binding_inner( "symbol->string", true );
+    Set_Binding_inner( "number->string", true );
+    Set_Binding_inner( "eval", true );
+    Set_Binding_inner( "set!", true );
   } // Init()
   
   public void Exception_Process() {

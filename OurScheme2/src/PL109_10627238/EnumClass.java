@@ -29,6 +29,8 @@ class Symbol {
   public static Symbol sMEMORYADDR = new Symbol( "sMEMORYADDR" );
   // project3 new symbol
   public static Symbol sBEGINECONTIMUE = new Symbol( "sBEGINECONTIMUE" );
+  // project4
+  public static Symbol sERROR = new Symbol( "sERROR" );
   
 } // class Symbol
 

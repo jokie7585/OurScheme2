@@ -4,6 +4,7 @@ import java.util.Vector;
 
 public class Interpreter {
   private static Token sTmpToken;
+  private static int mPrintLevel = 0;
   
   public static Node ReadSexp() throws Throwable {
     Node rootNode = NewFindExp();
@@ -99,7 +100,7 @@ public class Interpreter {
     } // if
     else {
       // print atom
-      System.out.println( Evaluate( root.Get().mToken ) );
+      System.out.print( Evaluate( root.Get().mToken ) );
       
     } // else
     
@@ -108,7 +109,7 @@ public class Interpreter {
   private static void NewSubprinter( Node root, int base ) throws Throwable {
     if ( root.mL_Child.Is_Dot() ) {
       System.out.print( "( " );
-      
+      mPrintLevel++;
       NewSubprinter( root.mL_Child.Get(), base + 1 );
       
       // print through bone
@@ -119,9 +120,11 @@ public class Interpreter {
         
         if ( boneNode.mL_Child != null ) {
           if ( boneNode.mL_Child.Is_Dot() ) {
+            
             // print inner indent
             System.out.print( IndentGenerator( base ) );
             NewSubprinter( boneNode.mL_Child.Get(), base + 1 );
+            
           } // if
           else if ( boneNode.mL_Child == null ) {
             throw new EvaluatingError( "Warning", "shuold not have the exception" );
@@ -145,15 +148,25 @@ public class Interpreter {
         boneNode = boneNode.mR_Child;
       } // while
       
-      System.out.println( IndentGenerator( base - 1 ) + ")" );
+      mPrintLevel--;
+      
+      if ( mPrintLevel == 0 ) {
+        System.out.print( IndentGenerator( base - 1 ) + ")" );
+      } // if
+      else {
+        System.out.println( IndentGenerator( base - 1 ) + ")" );
+      } // else
+      
     } // if
     else if ( root.mL_Child == null ) {
       throw new EvaluatingError( "Warning", "shuold not have the exception" );
     } // else if
     else {
+      
       // print start quote
       System.out.print( "( " );
       // print first node
+      mPrintLevel++;
       
       System.out.println( Evaluate( root.mL_Child.Get().mToken ) );
       // print through bone
@@ -190,8 +203,16 @@ public class Interpreter {
         boneNode = boneNode.mR_Child;
       } // while
       
+      mPrintLevel--;
+      
       // print end quote
-      System.out.println( IndentGenerator( base - 1 ) + ")" );
+      if ( mPrintLevel == 0 ) {
+        System.out.print( IndentGenerator( base - 1 ) + ")" );
+      } // if
+      else {
+        System.out.println( IndentGenerator( base - 1 ) + ")" );
+      } // else
+      
     } // else
   } // NewSubprinter()
   
@@ -219,7 +240,7 @@ public class Interpreter {
     sTmpToken = null;
   } // ComfirmNextToken()
   
-  private static String Evaluate( Token token ) {
+  public static String Evaluate( Token token ) {
     if ( token.mType == Symbol.sINT ) {
       return Integer.toString( Integer.parseInt( token.mContent ) );
     } // if
@@ -266,7 +287,8 @@ public class Interpreter {
       
       return result;
     } // else if
-    else if ( token.mType == Symbol.sSYMBOL || token.mType == Symbol.sSTRING ) {
+    else if ( token.mType == Symbol.sSYMBOL || token.mType == Symbol.sSTRING
+        || token.mType == Symbol.sERROR ) {
       return token.mContent;
     } // else if
     else if ( token.mType == Symbol.sSYMBOL_LEXICAL ) {
@@ -314,6 +336,10 @@ class Node {
   
   public static Node Generate_String( String string ) {
     return new Node( new Token( string, Symbol.sSTRING ) );
+  } // Generate_String()
+  
+  public static Node Generate_Error( String string ) {
+    return new Node( new Token( string, Symbol.sERROR ) );
   } // Generate_String()
   
   public static Node Generate_Quote() {

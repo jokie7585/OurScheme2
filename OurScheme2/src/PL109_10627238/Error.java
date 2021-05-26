@@ -55,8 +55,11 @@ class NoclosingQuoteError extends Error {
 } // class NoclosingQuoteError
 
 class UnexpectedError extends Error {
+  String tokenString;
+  
   public UnexpectedError( Vector<String> expects, Token token, int line, int col ) {
     super( "unexpected token" );
+    tokenString = token.mContent;
     
     StringBuffer tmpBuffer = new StringBuffer();
     for ( int i = 0 ; i < expects.size() ; i++ ) {
@@ -239,3 +242,20 @@ class VerboseException extends Exception {
   } // VerboseException()
   
 } // class VerboseException
+
+// project 4 error
+class ReadException extends Error {
+  public ReadException( String token ) {
+    super( "unexpected character" );
+    StringBuffer tmpBuffer = new StringBuffer();
+    
+    tmpBuffer.append( " Line " );
+    tmpBuffer.append( MyScanner.Get_Instance().CurLine() );
+    tmpBuffer.append( " Column " );
+    tmpBuffer.append( MyScanner.Get_Instance().PreTokenCol() );
+    tmpBuffer.append( " '" );
+    tmpBuffer.append( token.charAt( 0 ) );
+    tmpBuffer.append( "'" );
+    this.Set_Msg( "END-OF-FILE encountered" );
+  } // ReadException()
+} // class ReadException

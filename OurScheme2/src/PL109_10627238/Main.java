@@ -20,7 +20,8 @@ public class Main {
           
           MyScanner.Get_Instance().FinishReset();
           OurSchemVM.Get_Instance().mCallStack.Exception_Process();
-          System.out.println( "" );
+          // now printer not print line change at end
+          System.out.println( "\n" );
           System.out.print( "> " );
         } // tru
         catch ( NoclosingQuoteError e ) {
