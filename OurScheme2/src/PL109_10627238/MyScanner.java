@@ -9,6 +9,7 @@ public class MyScanner {
   private int mLine;
   private boolean mIs_EOF;
   private InputLineProcessor mTokenStream;
+  private Token mPreToken;
   
   public MyScanner() {
     mStdin = new Scanner( System.in );
@@ -33,6 +34,7 @@ public class MyScanner {
       tmpToken = Next();
     } // while
     
+    mPreToken = tmpToken;
     return tmpToken;
   } // Next()
   
@@ -79,6 +81,10 @@ public class MyScanner {
   public int PreTokenCol() {
     return mTokenStream.PreToken_Col();
   } // PreTokenCol()
+  
+  public Token PreToken() {
+    return mPreToken;
+  } // PreToken()
   
   private void ReadInALine() throws Throwable {
     if ( mStdin.hasNext() ) {

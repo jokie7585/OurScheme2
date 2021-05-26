@@ -1598,6 +1598,7 @@ public class OurSchemVM {
       Vector<Node> parameter = ParseParemeter( "read", 0, functionArgsSexp, false );
       
       try {
+        MyScanner.Get_Instance().FinishReset();
         returnNode = Interpreter.ReadSexp();
       } // try
       catch ( EOFEncounterError e ) {
@@ -1609,6 +1610,7 @@ public class OurSchemVM {
       } // catch
       catch ( UnexpectedError e ) {
         StringBuffer tmpBuffer = new StringBuffer();
+        Token errorToken = MyScanner.Get_Instance().PreToken();
         
         tmpBuffer.append( "\"ERROR (unexpected character) : " );
         tmpBuffer.append( "Line " );
@@ -1616,7 +1618,7 @@ public class OurSchemVM {
         tmpBuffer.append( " Column " );
         tmpBuffer.append( MyScanner.Get_Instance().PreTokenCol() );
         tmpBuffer.append( " '" );
-        tmpBuffer.append( e.tokenString.charAt( 0 ) );
+        tmpBuffer.append( errorToken.mContent.charAt( 0 ) );
         tmpBuffer.append( "'\"" );
         // System.out.println( "in do : " + tmpBuffer.toString() );
         

@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class Interpreter {
   private static Token sTmpToken;
-  private static int mPrintLevel = 0;
+  private static int sPrintLevel = 0;
   
   public static Node ReadSexp() throws Throwable {
     Node rootNode = NewFindExp();
@@ -109,7 +109,7 @@ public class Interpreter {
   private static void NewSubprinter( Node root, int base ) throws Throwable {
     if ( root.mL_Child.Is_Dot() ) {
       System.out.print( "( " );
-      mPrintLevel++;
+      sPrintLevel++;
       NewSubprinter( root.mL_Child.Get(), base + 1 );
       
       // print through bone
@@ -148,9 +148,9 @@ public class Interpreter {
         boneNode = boneNode.mR_Child;
       } // while
       
-      mPrintLevel--;
+      sPrintLevel--;
       
-      if ( mPrintLevel == 0 ) {
+      if ( sPrintLevel == 0 ) {
         System.out.print( IndentGenerator( base - 1 ) + ")" );
       } // if
       else {
@@ -166,7 +166,7 @@ public class Interpreter {
       // print start quote
       System.out.print( "( " );
       // print first node
-      mPrintLevel++;
+      sPrintLevel++;
       
       System.out.println( Evaluate( root.mL_Child.Get().mToken ) );
       // print through bone
@@ -203,10 +203,10 @@ public class Interpreter {
         boneNode = boneNode.mR_Child;
       } // while
       
-      mPrintLevel--;
+      sPrintLevel--;
       
       // print end quote
-      if ( mPrintLevel == 0 ) {
+      if ( sPrintLevel == 0 ) {
         System.out.print( IndentGenerator( base - 1 ) + ")" );
       } // if
       else {

@@ -55,11 +55,9 @@ class NoclosingQuoteError extends Error {
 } // class NoclosingQuoteError
 
 class UnexpectedError extends Error {
-  String tokenString;
   
   public UnexpectedError( Vector<String> expects, Token token, int line, int col ) {
     super( "unexpected token" );
-    tokenString = token.mContent;
     
     StringBuffer tmpBuffer = new StringBuffer();
     for ( int i = 0 ; i < expects.size() ; i++ ) {
