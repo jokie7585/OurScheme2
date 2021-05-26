@@ -2026,7 +2026,14 @@ public class OurSchemVM {
           else if ( InnerFunction.Is_symbol( param1 ).Is_T() ) {
             
             if ( param1.mToken.mType == Symbol.sSYMBOL ) {
-              throw new EvaluatingError( "Warning", "unDereference symbol!" );
+              // throw new EvaluatingError( "Warning", "unDereference symbol!"
+              // );
+              if ( param1.Get_Symbol().compareTo( param2.Get_Symbol() ) == 0 ) {
+                return true;
+              } // if
+              else {
+                return false;
+              } // else
             } // if
             else {
               if ( param1.Get_Symbol().compareTo( param2.Get_Symbol() ) == 0 ) {
@@ -2132,21 +2139,23 @@ public class OurSchemVM {
           } // else if
           else if ( InnerFunction.Is_symbol( param1 ).Is_T() ) {
             
-            if ( param1.mToken.mType == Symbol.sSYMBOL ) {
-              throw new EvaluatingError( "Warning", "unDereference symbol! param1: " + param1.Get_Symbol() );
+            // if ( param1.mToken.mType == Symbol.sSYMBOL ) {
+            // throw new EvaluatingError( "Warning", "unDereference symbol!
+            // param1: " + param1.Get_Symbol() );
+            // } // if
+            // else if ( param2.mToken.mType == Symbol.sSYMBOL ) {
+            // throw new EvaluatingError( "Warning", "unDereference symbol!
+            // param2: " + param2.Get_Symbol() );
+            // } // else if
+            // else {
+            if ( param1.Get_Symbol().compareTo( param2.Get_Symbol() ) == 0 ) {
+              return true;
             } // if
-            else if ( param2.mToken.mType == Symbol.sSYMBOL ) {
-              throw new EvaluatingError( "Warning", "unDereference symbol! param2: " + param2.Get_Symbol() );
-            } // else if
             else {
-              if ( param1.Get_Symbol().compareTo( param2.Get_Symbol() ) == 0 ) {
-                return true;
-              } // if
-              else {
-                return false;
-              } // else
-              
+              return false;
             } // else
+            
+            // } // else
             
           } // else if
           else if ( InnerFunction.Is__Boolean( param1 ).Is_T() ) {

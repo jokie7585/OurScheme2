@@ -723,12 +723,12 @@ class InnerFunction {
     // TODO bypass need to let all node be primitive
     
     // change a symbol to a string
-    if ( Is_Atom( Sexp ).mToken.mType == Symbol.sT ) {
-      if ( Sexp.mToken.mType == Symbol.sSYMBOL ) {
-        Sexp.mToken.mType = Symbol.sSYMBOL_LEXICAL;
-        Sexp.mToken.mContent = "))" + Sexp.mToken.mContent;
-      } // if
-    } // if
+    // if ( Is_Atom( Sexp ).mToken.mType == Symbol.sT ) {
+    // if ( Sexp.mToken.mType == Symbol.sSYMBOL ) {
+    // Sexp.mToken.mType = Symbol.sSYMBOL_LEXICAL;
+    // Sexp.mToken.mContent = "))" + Sexp.mToken.mContent;
+    // } // if
+    // } // if
     
     return Sexp;
   } // ByPass()
