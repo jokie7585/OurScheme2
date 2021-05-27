@@ -95,6 +95,11 @@ public class Interpreter {
   } // NewFindExp()
   
   public static void NewPrinter( Node root ) throws Throwable {
+    if ( root == null ) {
+      System.out.println( "null in printer" );
+      return;
+    } // if
+    
     if ( root.Is_Dot() ) {
       NewSubprinter( root.Get(), 0 + 1 );
     } // if

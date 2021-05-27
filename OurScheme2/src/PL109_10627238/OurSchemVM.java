@@ -163,7 +163,7 @@ public class OurSchemVM {
   
   public Node CallFunction( Node Sexp, BindingTB scope ) throws Throwable {
     Node returnNode = null;
-    
+    Sexp = Sexp.Get();
     Node functionBind;
     
     try {
@@ -533,6 +533,10 @@ public class OurSchemVM {
       Vector<Node> paremeters = ParseParemeter( "cons", 2, functionArgsSexp, false );
       Node leftNode;
       Node rightNode;
+      
+      // System.out.println( "cons : left eval" );
+      // Interpreter.NewPrinter( paremeters.elementAt( 0 ) );
+      
       try {
         leftNode = Evaluate( paremeters.elementAt( 0 ), scope );
       } // try
@@ -542,6 +546,11 @@ public class OurSchemVM {
         throw new NoReturnParame();
       } // catch
       
+      // System.out.println( "\n end cons : left eval" );
+      
+      // System.out.println( "cons : right eval" );
+      // Interpreter.NewPrinter( paremeters.elementAt( 1 ) );
+      
       try {
         rightNode = Evaluate( paremeters.elementAt( 1 ), scope );
       } // try
@@ -550,6 +559,8 @@ public class OurSchemVM {
         mCallStack.Pop();
         throw new NoReturnParame();
       } // catch
+      
+      // System.out.println( "\n end cons : right eval" );
       
       returnNode = InnerFunction.Cons( leftNode, rightNode );
       mCallStack.Pop();
@@ -1428,24 +1439,28 @@ public class OurSchemVM {
         executableSexp = new Vector<Node>();
         
         if ( parameter.size() >= 2 && InnerFunction.Is_List( parameter.elementAt( 0 ) ).Is_T() ) {
+          // System.out.println( "let have more than2 args" );
           Vector<Node> argumentPair = ParseParemeter( "", 0, parameter.elementAt( 0 ), true );
           
           // check all argument pair
           for ( int i = 0 ; i < argumentPair.size() ; i++ ) {
+            // System.out.println( "start parse local" );
             if ( InnerFunction.Is_List( argumentPair.elementAt( i ) ).Is_T() ) {
+              // System.out.println( "is list" );
               
               Vector<Node> tmpPair = ParseParemeter( "", 0, argumentPair.elementAt( i ), true );
               
               if ( tmpPair.size() != 2 ) {
-                
+                // System.out.println( "is 2 element list" );
                 throw new FormatError( "LET format" );
               } // if
               
               if ( InnerFunction.Is_symbol( tmpPair.elementAt( 0 ) ).Is_T() ) {
-                
+                // System.out.println( "first el is symbol : " +
+                // tmpPair.elementAt( 0 ).Get_Symbol() );
                 argSymbol.add( tmpPair.elementAt( 0 ) );
                 argValue.add( tmpPair.elementAt( 1 ) );
-                
+                // System.out.println( "finish" );
               } // if
               else {
                 
@@ -1460,6 +1475,7 @@ public class OurSchemVM {
             
           } // for
           
+          // System.out.println( "run" );
           for ( int i = 1 ; i < parameter.size() ; i++ ) {
             executableSexp.add( parameter.elementAt( i ) );
           } // for
@@ -1733,16 +1749,21 @@ public class OurSchemVM {
       mCallStack.Push();
       Vector<Node> parameter = ParseParemeter( "eval", 1, functionArgsSexp, false );
       
+      Node sexpNode;
       try {
-        returnNode = Evaluate( parameter.elementAt( 0 ), scope );
+        sexpNode = Evaluate( parameter.elementAt( 0 ), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = parameter.elementAt( 0 );
         throw new NoReturnParame();
       } // catch
       
-      returnNode = Evaluate( returnNode, scope );
+      // System.out.println( "\nexecute in eval : " );
+      // Interpreter.NewPrinter( sexpNode );
       
+      returnNode = Evaluate( sexpNode, scope );
+      
+      // System.out.println( "end in eval : " );
       mCallStack.Pop();
     } // else if
     else {
@@ -1896,7 +1917,7 @@ public class OurSchemVM {
     Vector<Node> paremeters = new Vector<Node>();
     
     while ( PTree != null && !PTree.Is_Nil() ) {
-      
+      // System.out.println( " not nil, parse a arg" );
       paremeters.add( PTree.mL_Child );
       // go down the bones
       PTree = PTree.mR_Child;
