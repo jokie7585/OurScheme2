@@ -1216,9 +1216,14 @@ public class OurSchemVM {
         
         // System.out.println( "cond functionArgsSexp: " );
         // Interpreter.NewPrinter( functionArgsSexp );
-        //
+        // System.out.println( "\n" );
+        
         paremeters = ParseParemeter( "cond", 1, functionArgsSexp, true );
+        
         for ( int i = 0 ; i < paremeters.size() ; i++ ) {
+          // System.out.println( "in cond process el: " );
+          // Interpreter.NewPrinter( paremeters.elementAt( i ) );
+          // System.out.println( "\n" );
           if ( InnerFunction.Is_List( paremeters.elementAt( i ) ).Is_Nil() ) {
             mFailedList = Sexp;
             
@@ -1974,9 +1979,19 @@ public class OurSchemVM {
       throws Throwable {
     Vector<Node> paremeters = new Vector<Node>();
     
-    while ( PTree != null && !PTree.Is_Nil() ) {
-      // System.out.println( " not nil, parse a arg" );
-      paremeters.add( PTree.mL_Child );
+    while ( PTree != null ) {
+      PTree = PTree.Get();
+      
+      if ( PTree.Is_Dot() ) {
+        if ( PTree.mL_Child != null ) {
+          paremeters.add( PTree.mL_Child );
+          // System.out.println( " not nil, parse a arg : " );
+          // Interpreter.NewPrinter( PTree.mL_Child );
+          // System.out.println();
+        } // if
+        
+      } // if
+      
       // go down the bones
       PTree = PTree.mR_Child;
     } // while
