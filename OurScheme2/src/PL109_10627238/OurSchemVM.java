@@ -4,29 +4,45 @@ import java.util.Vector;
 
 public class OurSchemVM {
   private static OurSchemVM sOurSchemVM_S;
-  private Node mNowExcutingSexpNode;
+  // to meet the project4 feature
+  // now mNowExcutingSexpNode is a stack
+  private Vector<Node> mNowExcutingSexpNode;
   private Node mFailedList;
   private Node mVerbose;
   // it represent the control on a function
   // or Os
   // // when mScope is the first BindingTale
   public BindingTB mScope_Global;
-  public BindingTB mScope_Cur;
+  public Vector<BindingTB> mScope_Cur;
   public CallStack mCallStack;
   
   public OurSchemVM() {
     mVerbose = Function.Generate_True();
+    mNowExcutingSexpNode = new Vector<Node>();
     
     Memory.Get_Instance().Init();
     // register inner Binding
     mCallStack = new CallStack();
     mScope_Global = mCallStack.Top();
-    mScope_Cur = mScope_Global;
+    mScope_Cur = new Vector<BindingTB>();
+    CurScope_Push( mScope_Global );
+    
   } // OurSchemVM()
   
   public void Initial() {
     sOurSchemVM_S = new OurSchemVM();
   } // Initial()
+  
+  public void Exception_process() {
+    // call stack exception process
+    mCallStack.Exception_Process();
+    // VM exception process
+    // init
+    mNowExcutingSexpNode = new Vector<Node>();
+    // init
+    mScope_Cur = new Vector<BindingTB>();
+    CurScope_Push( mScope_Global );
+  } // Exception_process()
   
   public static OurSchemVM Get_Instance() {
     if ( sOurSchemVM_S == null ) {
@@ -62,12 +78,46 @@ public class OurSchemVM {
   } // Set_FailedList()
   
   public Node Get_FailedMainSexp() {
-    return mNowExcutingSexpNode;
+    return ExecutingSexpNode_Top();
   } // Get_FailedMainSexp()
   
+  public Node ExecutingSexpNode_Top() {
+    return mNowExcutingSexpNode.elementAt( mNowExcutingSexpNode.size() - 1 );
+  } // ExecutingSexpNode_Top()
+  
+  public void ExecutingSexpNode_Push( Node sexpNode ) {
+    mNowExcutingSexpNode.add( sexpNode );
+  } // ExecutingSexpNode_Push()
+  
+  public void ExecutingSexpNode_Pop() {
+    mNowExcutingSexpNode.remove( mNowExcutingSexpNode.size() - 1 );
+  } // ExecutingSexpNode_Pop()
+  
+  public boolean Is_TopLevel( Node sexp ) throws Throwable {
+    return Equal( sexp, ExecutingSexpNode_Top() );
+  } // Is_TopLevel()
+  
+  public void CurScope_Push( BindingTB tb ) {
+    mScope_Cur.add( tb );
+  } // CurScope_Push()
+  
+  public void CurScope_Pop() {
+    mScope_Cur.remove( mScope_Cur.size() - 1 );
+  } // CurScope_Pop()
+  
+  public BindingTB CurScope_Top() {
+    return mScope_Cur.elementAt( mScope_Cur.size() - 1 );
+  } // CurScope_Top()
+  
   public Node Apply( Node Sexp ) throws Throwable {
-    mNowExcutingSexpNode = Sexp;
-    return Evaluate( Sexp, mScope_Global );
+    
+    ExecutingSexpNode_Push( Sexp );
+    Node retunNode = Evaluate( Sexp, CurScope_Top() );
+    ExecutingSexpNode_Pop();
+    Interpreter.NewPrinter( retunNode );
+    // now printer not print line change at end
+    System.out.println( "" );
+    return retunNode;
   } // Apply()
   
   public Node Evaluate( Node Sexp, BindingTB scope ) throws Throwable {
@@ -539,20 +589,26 @@ public class OurSchemVM {
       
       try {
         leftNode = Evaluate( paremeters.elementAt( 0 ), scope );
+        // System.out.println( "\ncons : left after eval" );
+        // Interpreter.NewPrinter( leftNode );
+        // System.out.println();
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 0 );
         mCallStack.Pop();
         throw new NoReturnParame();
       } // catch
-      
+      //
       // System.out.println( "\n end cons : left eval" );
-      
+      //
       // System.out.println( "cons : right eval" );
       // Interpreter.NewPrinter( paremeters.elementAt( 1 ) );
       
       try {
         rightNode = Evaluate( paremeters.elementAt( 1 ), scope );
+        // System.out.println( "\ncons : right after eval" );
+        // Interpreter.NewPrinter( rightNode );
+        // System.out.println();
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = paremeters.elementAt( 1 );
@@ -597,7 +653,7 @@ public class OurSchemVM {
     else if ( funcnName.equals( "define" ) ) {
       // no need to push a new call stack
       
-      if ( mCallStack.Is_TopLevel() ) {
+      if ( Is_TopLevel( Sexp ) ) {
         mCallStack.Push();
         
         try {
@@ -1347,7 +1403,7 @@ public class OurSchemVM {
     else if ( funcnName.equals( "clean-environment" ) ) {
       // no need to push a new call stack
       
-      if ( mCallStack.Is_TopLevel() ) {
+      if ( Is_TopLevel( Sexp ) ) {
         ParseParemeter( "clean-environment", 0, functionArgsSexp, false );
         Initial();
         // mCallStack.ListCurrentLayer();
@@ -1361,7 +1417,7 @@ public class OurSchemVM {
     else if ( funcnName.equals( "exit" ) ) {
       // no need to push a new call stack
       
-      if ( mCallStack.Is_TopLevel() ) {
+      if ( Is_TopLevel( Sexp ) ) {
         // check no argument
         ParseParemeter( "exit", 0, functionArgsSexp, false );
         InnerFunction.Exit();
@@ -1761,7 +1817,9 @@ public class OurSchemVM {
       // System.out.println( "\nexecute in eval : " );
       // Interpreter.NewPrinter( sexpNode );
       
-      returnNode = Evaluate( sexpNode, scope );
+      CurScope_Push( scope );
+      returnNode = Apply( sexpNode );
+      CurScope_Pop();
       
       // System.out.println( "end in eval : " );
       mCallStack.Pop();

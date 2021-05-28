@@ -15,13 +15,9 @@ public class Main {
           
           sexpNode = OurSchemVM.Get_Instance().Apply( sexpNode );
           
-          // Interpreter.Printer( sexpNode, 1 );
-          Interpreter.NewPrinter( sexpNode );
-          
           MyScanner.Get_Instance().FinishReset();
-          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
-          // now printer not print line change at end
-          System.out.println( "\n" );
+          OurSchemVM.Get_Instance().Exception_process();
+          System.out.println( "" );
           System.out.print( "> " );
         } // tru
         catch ( NoclosingQuoteError e ) {
@@ -37,14 +33,14 @@ public class Main {
         catch ( EvaluatingError e ) {
           System.out.println( e.Get_Msg() );
           System.out.println( "" );
-          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
+          OurSchemVM.Get_Instance().Exception_process();
           MyScanner.Get_Instance().FinishReset();
           System.out.print( "> " );
         } // catch
         catch ( IncorrectArgNumError e ) {
           System.out.println( e.Get_Msg() );
           System.out.println( "" );
-          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
+          OurSchemVM.Get_Instance().Exception_process();
           MyScanner.Get_Instance().FinishReset();
           System.out.print( "> " );
         } // catch
@@ -52,7 +48,7 @@ public class Main {
           System.out.print( e.Get_Msg() );
           Interpreter.NewPrinter( OurSchemVM.Get_Instance().Get_FailedList() );
           System.out.println( "" );
-          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
+          OurSchemVM.Get_Instance().Exception_process();
           MyScanner.Get_Instance().FinishReset();
           System.out.print( "> " );
         } // catch
@@ -60,13 +56,13 @@ public class Main {
           System.out.print( e.Get_Msg() );
           Interpreter.NewPrinter( OurSchemVM.Get_Instance().Get_FailedMainSexp() );
           System.out.println( "" );
-          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
+          OurSchemVM.Get_Instance().Exception_process();
           MyScanner.Get_Instance().FinishReset();
           System.out.print( "> " );
         } // catch
         catch ( VerboseException e ) {
           MyScanner.Get_Instance().FinishReset();
-          OurSchemVM.Get_Instance().mCallStack.Exception_Process();
+          OurSchemVM.Get_Instance().Exception_process();
           System.out.println( "" );
           System.out.print( "> " );
         } // catch

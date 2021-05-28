@@ -18,6 +18,8 @@ public class BindingTB {
   
   public String Set( Node bindingTarget, Node bindingSexp ) throws Throwable {
     String targetSymbolString = "";
+    bindingTarget = bindingTarget.Get();
+    bindingSexp = bindingSexp.Get();
     
     // check if function or symbol bind
     // list include the quoted atom
@@ -64,7 +66,12 @@ public class BindingTB {
       
       // start define process
       
-      targetSymbolString = bindingTarget.mL_Child.mToken.mContent;
+      // System.out.println( "target symbol : " +
+      // bindingTarget.mL_Child.Get_Symbol() );
+      // System.out.println( "target symbol(after Get) : " +
+      // bindingTarget.mL_Child.Get().Get_Symbol() );
+      
+      targetSymbolString = bindingTarget.mL_Child.Get().mToken.mContent;
       Vector<Node> functionBody = OurSchemVM.ParseParemeter( "", 1, bindingSexp, true );
       
       // process project 3 lambda plus define special case
@@ -111,7 +118,7 @@ public class BindingTB {
       if ( InnerFunction.Is_Atom( bindingTarget ).mToken.mType == Symbol.sT ) {
         // a non quote atom
         
-        if ( bindingTarget.mToken.mType != Symbol.sSYMBOL ) {
+        if ( bindingTarget.Get().mToken.mType != Symbol.sSYMBOL ) {
           // if atom check it is not a primitive
           throw new MainSexpError( "DEFINE format" );
         } // if
@@ -125,7 +132,7 @@ public class BindingTB {
           throw new MainSexpError( "DEFINE format" );
         } // catch
         
-        targetSymbolString = bindingTarget.mToken.mContent;
+        targetSymbolString = bindingTarget.Get().mToken.mContent;
         Binding target = I_get( targetSymbolString );
         
         // Set a atom symbol binding need to evaluate the bindingSexp
@@ -137,7 +144,7 @@ public class BindingTB {
         // Interpreter.NewPrinter( bindingSexp.mL_Child );
         
         try {
-          bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child, scope );
+          bindingValue = OurSchemVM.Get_Instance().Evaluate( bindingSexp.mL_Child.Get(), scope );
         } // try
         catch ( NoReturnValue e ) {
           throw new DefineOrLetANoReturn();
@@ -169,6 +176,8 @@ public class BindingTB {
   
   public String Set_local( Node bindingTarget, Node bindingSexp, boolean isFunctionargs ) throws Throwable {
     String targetSymbolString = "";
+    bindingTarget = bindingTarget.Get();
+    bindingSexp = bindingSexp.Get();
     
     // check if function or symbol bind
     // list include the quoted atom
@@ -250,7 +259,7 @@ public class BindingTB {
           throw new MainSexpError( "DEFINE format" );
         } // if
         
-        targetSymbolString = bindingTarget.mToken.mContent;
+        targetSymbolString = bindingTarget.Get().mToken.mContent;
         Binding target = I_get_local( targetSymbolString );
         
         // Set a atom symbol binding need to evaluate the bindingSexp
