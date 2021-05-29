@@ -1701,6 +1701,9 @@ public class OurSchemVM {
       
       Node msgNode;
       
+      System.out.println( "in error-object? detect : " + parameter.elementAt( 0 ).Get().Get_Symbol() );
+      mCallStack.ListLayer( scope );
+      System.out.println( "\nend print scope in error-object?" );
       try {
         msgNode = Evaluate( parameter.elementAt( 0 ).Get(), scope );
       } // try
@@ -1709,7 +1712,7 @@ public class OurSchemVM {
         throw new NoReturnParame();
       } // catch
       
-      if ( msgNode.mToken.mType == Symbol.sERROR ) {
+      if ( msgNode.Get().mToken.mType == Symbol.sERROR ) {
         returnNode = Function.Generate_True();
       } // if
       else {
