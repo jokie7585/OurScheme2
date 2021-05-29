@@ -110,14 +110,27 @@ public class OurSchemVM {
   } // CurScope_Top()
   
   public Node Apply( Node Sexp ) throws Throwable {
+    try {
+      ExecutingSexpNode_Push( Sexp );
+      Node retunNode = Evaluate( Sexp, CurScope_Top() );
+      ExecutingSexpNode_Pop();
+      Interpreter.NewPrinter( retunNode );
+      // now printer not print line change at end
+      System.out.println( "" );
+      return retunNode;
+    } // try
+    catch ( NoNeedReturnException e ) {
+      // it actually a return but only generate by
+      // // define
+      // // clean environment
+      // // quit is the same but it will shout down the program
+      
+      // // it null is okay because the three function never be nested call
+      ExecutingSexpNode_Pop();
+      System.out.println( "" );
+      return null;
+    } // catch
     
-    ExecutingSexpNode_Push( Sexp );
-    Node retunNode = Evaluate( Sexp, CurScope_Top() );
-    ExecutingSexpNode_Pop();
-    Interpreter.NewPrinter( retunNode );
-    // now printer not print line change at end
-    System.out.println( "" );
-    return retunNode;
   } // Apply()
   
   public Node Evaluate( Node Sexp, BindingTB scope ) throws Throwable {
@@ -676,7 +689,16 @@ public class OurSchemVM {
           
           String bindTargetString = mCallStack.Set_Binding( paremeters.elementAt( 0 ), bindingValueNode );
           
-          returnNode = Node.Generate_String( bindTargetString + " defined" );
+          if ( mVerbose.Is_T() ) {
+            System.out.print( bindTargetString + " defined" );
+          } // if
+          else {
+            // do nothing
+          } // else
+          
+          mCallStack.Pop();
+          
+          throw new NoNeedReturnException();
         } // try
         catch ( MainSexpError e ) {
           mCallStack.Pop();
@@ -691,15 +713,6 @@ public class OurSchemVM {
           mCallStack.Pop();
           throw new MainSexpError( "DEFINE format" );
         } // catch
-        
-        mCallStack.Pop();
-        
-        if ( mVerbose.Is_T() ) {
-          // do nothing
-        } // if
-        else {
-          throw new VerboseException();
-        } // else
         
       } // if
       else {
@@ -1411,8 +1424,16 @@ public class OurSchemVM {
       if ( Is_TopLevel( Sexp ) ) {
         ParseParemeter( "clean-environment", 0, functionArgsSexp, false );
         Initial();
-        // mCallStack.ListCurrentLayer();
-        returnNode = Node.Generate_String( "environment cleaned" );
+        if ( mVerbose.Is_T() ) {
+          System.out.print( "environment cleaned" );
+        } // if
+        else {
+          // do nothing
+        } // else
+        
+        mCallStack.Pop();
+        
+        throw new NoNeedReturnException();
       } // if
       else {
         mCallStack.Pop();

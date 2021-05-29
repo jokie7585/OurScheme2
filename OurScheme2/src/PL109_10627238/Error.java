@@ -257,3 +257,7 @@ class ReadException extends Error {
     this.Set_Msg( "END-OF-FILE encountered" );
   } // ReadException()
 } // class ReadException
+
+class NoNeedReturnException extends Exception {
+  
+} // class NoNeedReturnException
