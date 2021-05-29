@@ -137,6 +137,8 @@ public class OurSchemVM {
   } // Apply()
   
   public Node Evaluate( Node Sexp, BindingTB scope ) throws Throwable {
+    Sexp = Sexp.Get();
+    
     // if atom
     if ( InnerFunction.Is_Atom( Sexp ).mToken.mType == Symbol.sT ) {
       
@@ -1593,8 +1595,8 @@ public class OurSchemVM {
         // // // or need be catch by user define function
         for ( int i = 0 ; i < argSymbol.size() ; i++ ) {
           mFailedList = argValue.elementAt( i );
-          mCallStack.Set_Binding_local( argSymbol.elementAt( i ), Evaluate( argValue.elementAt( i ), scope ),
-              false, cur );
+          mCallStack.Set_Binding_local( argSymbol.elementAt( i ),
+              Evaluate( argValue.elementAt( i ).Get(), scope ), false, cur );
         } // for
       } // try
       catch ( NoReturnValue e ) {
@@ -1607,17 +1609,17 @@ public class OurSchemVM {
       for ( int i = 0 ; i < executableSexp.size() ; i++ ) {
         try {
           Scope_Bind( executableSexp.elementAt( i ), cur );
-          returnNode = Evaluate( executableSexp.elementAt( i ), cur );
+          returnNode = Evaluate( executableSexp.elementAt( i ).Get(), cur );
           Scope_DeBind( executableSexp.elementAt( i ) );
         } // try
         catch ( NoReturnValue e ) {
           if ( i == executableSexp.size() - 1 ) {
-            Scope_DeBind( executableSexp.elementAt( i ) );
+            Scope_DeBind( executableSexp.elementAt( i ).Get() );
             mFailedList = executableSexp.elementAt( i );
             throw new NoReturnValue();
           } // if
           else {
-            Scope_DeBind( executableSexp.elementAt( i ) );
+            Scope_DeBind( executableSexp.elementAt( i ).Get() );
           } // else
         } // catch
         
@@ -1678,7 +1680,7 @@ public class OurSchemVM {
       Node msgNode;
       
       try {
-        msgNode = Evaluate( parameter.elementAt( 0 ), scope );
+        msgNode = Evaluate( parameter.elementAt( 0 ).Get(), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = parameter.elementAt( 0 );
@@ -1760,7 +1762,7 @@ public class OurSchemVM {
       Node msgNode;
       
       try {
-        msgNode = Evaluate( parameter.elementAt( 0 ), scope );
+        msgNode = Evaluate( parameter.elementAt( 0 ).Get(), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = parameter.elementAt( 0 );
@@ -1775,10 +1777,10 @@ public class OurSchemVM {
     else if ( funcnName.equals( "display-string" ) ) {
       mCallStack.Push();
       Vector<Node> parameter = ParseParemeter( "display-string", 1, functionArgsSexp, false );
-      Node value = parameter.elementAt( 0 );
+      Node value;
       
       try {
-        value = Evaluate( parameter.elementAt( 0 ), scope );
+        value = Evaluate( parameter.elementAt( 0 ).Get(), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = parameter.elementAt( 0 );
@@ -1813,7 +1815,7 @@ public class OurSchemVM {
       Node msgNode;
       
       try {
-        msgNode = Evaluate( parameter.elementAt( 0 ), scope );
+        msgNode = Evaluate( parameter.elementAt( 0 ).Get(), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = parameter.elementAt( 0 );
@@ -1836,7 +1838,7 @@ public class OurSchemVM {
       Node msgNode;
       
       try {
-        msgNode = Evaluate( parameter.elementAt( 0 ), scope );
+        msgNode = Evaluate( parameter.elementAt( 0 ).Get(), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = parameter.elementAt( 0 );
@@ -1859,7 +1861,7 @@ public class OurSchemVM {
       
       Node sexpNode;
       try {
-        sexpNode = Evaluate( parameter.elementAt( 0 ), scope );
+        sexpNode = Evaluate( parameter.elementAt( 0 ).Get(), scope );
       } // try
       catch ( NoReturnValue e ) {
         mFailedList = parameter.elementAt( 0 );
