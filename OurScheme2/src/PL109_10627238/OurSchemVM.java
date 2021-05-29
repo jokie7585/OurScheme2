@@ -1595,8 +1595,9 @@ public class OurSchemVM {
         // // // or need be catch by user define function
         for ( int i = 0 ; i < argSymbol.size() ; i++ ) {
           mFailedList = argValue.elementAt( i );
-          mCallStack.Set_Binding_local( argSymbol.elementAt( i ),
-              Evaluate( argValue.elementAt( i ).Get(), scope ), false, cur );
+          Node argNode = argSymbol.elementAt( i );
+          Node valNode = Evaluate( argValue.elementAt( i ).Get(), scope );
+          mCallStack.Set_Binding_local( argNode, valNode.Get(), false, cur );
         } // for
       } // try
       catch ( NoReturnValue e ) {
