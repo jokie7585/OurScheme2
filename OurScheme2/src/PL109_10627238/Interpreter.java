@@ -345,7 +345,7 @@ class Node {
   
   public static Node Generate_Error( String string ) {
     return new Node( new Token( string, Symbol.sERROR ) );
-  } // Generate_String()
+  } // Generate_Error()
   
   public static Node Generate_Quote() {
     return new Node( new Token( "quote", Symbol.sSYMBOL ) );

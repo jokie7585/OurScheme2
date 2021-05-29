@@ -47,7 +47,7 @@ public class Main {
         catch ( ListError e ) {
           System.out.print( e.Get_Msg() );
           Interpreter.NewPrinter( OurSchemVM.Get_Instance().Get_FailedList() );
-          System.out.println( "" );
+          System.out.println( "\n" );
           OurSchemVM.Get_Instance().Exception_process();
           MyScanner.Get_Instance().FinishReset();
           System.out.print( "> " );
@@ -55,7 +55,7 @@ public class Main {
         catch ( MainSexpError e ) {
           System.out.print( e.Get_Msg() );
           Interpreter.NewPrinter( OurSchemVM.Get_Instance().Get_FailedMainSexp() );
-          System.out.println( "" );
+          System.out.println( "\n" );
           OurSchemVM.Get_Instance().Exception_process();
           MyScanner.Get_Instance().FinishReset();
           System.out.print( "> " );

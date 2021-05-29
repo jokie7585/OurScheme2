@@ -114,9 +114,13 @@ public class OurSchemVM {
       ExecutingSexpNode_Push( Sexp );
       Node retunNode = Evaluate( Sexp, CurScope_Top() );
       ExecutingSexpNode_Pop();
-      Interpreter.NewPrinter( retunNode );
-      // now printer not print line change at end
-      System.out.println( "" );
+      
+      if ( mNowExcutingSexpNode.size() == 0 ) {
+        Interpreter.NewPrinter( retunNode );
+        // now printer not print line change at end
+        System.out.println( "" );
+      } // if
+      
       return retunNode;
     } // try
     catch ( NoNeedReturnException e ) {
