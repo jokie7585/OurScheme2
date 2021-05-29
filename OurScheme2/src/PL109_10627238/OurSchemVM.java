@@ -1315,11 +1315,12 @@ public class OurSchemVM {
         else {
           // System.out.println( "in cond : check else : " );
           // Interpreter.NewPrinter( executSequence.elementAt( 0 ) );
+          // System.out.println( "\nend in cond else check" );
           // last one
           // check if keyword
           // // else
           
-          if ( executSequence.elementAt( 0 ).Get_Symbol().compareTo( "else" ) == 0 ) {
+          if ( executSequence.elementAt( 0 ).Get().Get_Symbol().compareTo( "else" ) == 0 ) {
             for ( int j = 1 ; j < executSequence.size() ; j++ ) {
               
               try {
