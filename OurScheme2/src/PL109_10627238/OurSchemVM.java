@@ -131,7 +131,6 @@ public class OurSchemVM {
       
       // // it null is okay because the three function never be nested call
       ExecutingSexpNode_Pop();
-      System.out.println( "" );
       return null;
     } // catch
     
@@ -694,7 +693,7 @@ public class OurSchemVM {
           String bindTargetString = mCallStack.Set_Binding( paremeters.elementAt( 0 ), bindingValueNode );
           
           if ( mVerbose.Is_T() ) {
-            System.out.print( bindTargetString + " defined" );
+            System.out.println( bindTargetString + " defined" );
           } // if
           else {
             // do nothing
@@ -1433,7 +1432,7 @@ public class OurSchemVM {
         ParseParemeter( "clean-environment", 0, functionArgsSexp, false );
         Initial();
         if ( mVerbose.Is_T() ) {
-          System.out.print( "environment cleaned" );
+          System.out.println( "environment cleaned" );
         } // if
         else {
           // do nothing
@@ -1636,14 +1635,27 @@ public class OurSchemVM {
     else if ( funcnName.equals( "verbose" ) ) {
       mCallStack.Push();
       
+      // System.out.println( "In verbose in scope find : " +
+      // functionArgsSexp.Get_Symbol() );
+      //
+      // mCallStack.ListLayer( scope );
+      
       Vector<Node> parameter = ParseParemeter( "verbose", 1, functionArgsSexp, false );
       Node valueNode = Evaluate( parameter.elementAt( 0 ).Get(), scope ).Get();
       
+      // System.out.println( " dereference : " + functionArgsSexp.Get_Symbol()
+      // );
+      // Interpreter.NewPrinter( valueNode );
+      // System.out.println();
+      
       if ( InnerFunction.Is__Boolean( valueNode ).Is_T() ) {
-        if ( parameter.elementAt( 0 ).Is_T() ) {
+        
+        if ( valueNode.Is_T() ) {
+          // System.out.println( "set verbose to : true" );
           mVerbose = Function.Generate_True();
         } // if
         else {
+          // System.out.println( "set verbose to : false" );
           mVerbose = Function.Generate_False();
         } // else
         
@@ -2493,6 +2505,7 @@ class CallStack {
         System.out.println( tmp.elementAt( i ).mSymbol + "\t" + tmp.elementAt( i ).Get() + "\t"
             + tmp.elementAt( i ).mIs_FunctionArgument );
         Interpreter.NewPrinter( tmp.elementAt( i ).Get().Get() );
+        System.out.println( "" );
       } // for
       
       System.out.println( "\n" );
